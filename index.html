@@ -228,22 +228,55 @@
   </div>
 
   <!-- CONFERMA PRENOTAZIONE -->
-  <div id="screen-conferma" class="app-screen" style="height:100vh;overflow-y:auto;">
+  <div id="screen-conferma" class="app-screen">
     <div class="top-bar">
       <button class="back-btn" id="conferma-back-btn">‹ Indietro</button>
       <div class="logo" style="font-size:15px">Conferma</div>
     </div>
-    <div class="content" style="overflow-y:visible;padding-bottom:60px;">
+    <div class="content">
       <div class="card">
         <div class="section-title">Riepilogo</div>
         <div class="summary-row"><span id="conf-servizio" style="color:var(--text-primary)">—</span></div>
         <div class="summary-row total"><span>Totale</span><span id="conf-prezzo">—</span></div>
       </div>
 
-      <div class="section-title" style="margin-top:16px">Data</div>
-      <input type="date" id="conf-data" class="input-field" />
+      <div class="section-title" style="margin-top:16px">Seleziona data</div>
 
-      <div class="section-title">Bambino/a</div>
+      <!-- CALENDARIO -->
+      <div class="cal-wrapper">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calPrevMonth()">‹</button>
+          <span id="cal-month-label" style="font-size:14px;font-weight:500;color:var(--text-primary)"></span>
+          <button class="cal-nav" onclick="calNextMonth()">›</button>
+        </div>
+        <div class="cal-grid" id="cal-giorni-header">
+          <div class="cal-cell cal-dow">L</div>
+          <div class="cal-cell cal-dow">M</div>
+          <div class="cal-cell cal-dow">M</div>
+          <div class="cal-cell cal-dow">G</div>
+          <div class="cal-cell cal-dow">V</div>
+          <div class="cal-cell cal-dow">S</div>
+          <div class="cal-cell cal-dow">D</div>
+        </div>
+        <div class="cal-grid" id="cal-giorni"></div>
+        <div class="cal-legend">
+          <span class="legend-item"><span class="legend-dot dot-available"></span>Disponibile</span>
+          <span class="legend-item"><span class="legend-dot dot-busy"></span>Occupato</span>
+          <span class="legend-item"><span class="legend-dot dot-closed"></span>Chiuso</span>
+        </div>
+      </div>
+
+      <!-- ORARIO (solo compleanni) -->
+      <div id="orario-wrapper" style="display:none">
+        <div class="section-title" style="margin-top:16px">Orario di inizio</div>
+        <div id="orario-slots" class="slots-grid"></div>
+        <div id="orario-info" style="font-size:12px;color:var(--text-secondary);margin-top:6px"></div>
+      </div>
+
+      <input type="hidden" id="conf-data" />
+      <input type="hidden" id="conf-orario" />
+
+      <div class="section-title" style="margin-top:16px">Bambino/a</div>
       <select id="conf-bambino" class="input-field">
         <option value="">Seleziona bambino/a...</option>
       </select>
