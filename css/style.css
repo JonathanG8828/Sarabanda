@@ -60,8 +60,8 @@ html, body {
 .error-msg.visible { display: block; }
 
 /* ── APP WRAPPER ── */
-#app-wrapper { height: 100vh; overflow: hidden; }
-.app-screen { display: none; flex-direction: column; height: 100vh; }
+#app-wrapper { height: 100dvh; overflow: hidden; }
+.app-screen { display: none; flex-direction: column; height: 100dvh; min-height: -webkit-fill-available; }
 .app-screen.active { display: flex; }
 
 /* ── TOP BAR ── */
