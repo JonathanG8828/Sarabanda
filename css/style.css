@@ -233,3 +233,20 @@ label:first-child { margin-top: 0; }
 .slot { padding: 10px 4px; text-align: center; font-size: 13px; font-weight: 500; border-radius: var(--radius-md); border: 0.5px solid var(--border); cursor: pointer; color: var(--text-primary); background: var(--bg-primary); }
 .slot:hover { border-color: var(--green); color: var(--green); }
 .slot.selected { background: var(--green); color: #fff; border-color: var(--green); }
+
+.nav-bar {
+  background: #ffffff !important;
+  border-top: 1px solid #e0e0e0 !important;
+}
+.nav-item svg {
+  stroke: #666666 !important;
+}
+.nav-item span {
+  color: #666666 !important;
+}
+.nav-item.active svg {
+  stroke: #1A3D2E !important;
+}
+.nav-item.active span {
+  color: #1A3D2E !important;
+}
