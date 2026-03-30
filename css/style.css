@@ -222,3 +222,8 @@ label:first-child { margin-top: 0; }
 .nav-item.active span {
   color: #1A3D2E !important;
 }
+
+#screen-conferma .content {
+  overflow-y: auto;
+  padding-bottom: 40px;
+}
