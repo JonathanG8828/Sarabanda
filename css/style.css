@@ -205,3 +205,20 @@ label:first-child { margin-top: 0; }
 .td-label { color: var(--text-secondary); padding: 8px 0; font-size: 13px; }
 .td-val { text-align: right; color: var(--text-primary); font-size: 13px; padding: 8px 0; }
 .tr-border { border-top: 0.5px solid var(--border); }
+
+.nav-bar {
+  background: #ffffff !important;
+  border-top: 1px solid #e0e0e0 !important;
+}
+.nav-item svg {
+  stroke: #666666 !important;
+}
+.nav-item span {
+  color: #666666 !important;
+}
+.nav-item.active svg {
+  stroke: #1A3D2E !important;
+}
+.nav-item.active span {
+  color: #1A3D2E !important;
+}
