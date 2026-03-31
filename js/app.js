@@ -580,6 +580,62 @@ function adminApplyFilters() {
   el.innerHTML = filtered.map(b => adminBookingCardHTML(b)).join('');
 }
 
+// ═══════════════════════════════════════════
+//  ADMIN — TAB SWITCH
+// ═══════════════════════════════════════════
+function adminSwitchTab(tab) {
+  document.getElementById('admin-tab-prenotazioni').classList.toggle('active', tab === 'prenotazioni');
+  document.getElementById('admin-tab-utenti').classList.toggle('active', tab === 'utenti');
+  document.getElementById('admin-bookings-list').style.display = tab === 'prenotazioni' ? 'block' : 'none';
+  document.getElementById('admin-filters').style.display = tab === 'prenotazioni' ? 'flex' : 'none';
+  document.getElementById('admin-users-list').style.display = tab === 'utenti' ? 'block' : 'none';
+  if (tab === 'utenti') loadAdminUsers();
+}
+
+// ═══════════════════════════════════════════
+//  ADMIN — CARICA UTENTI
+// ═══════════════════════════════════════════
+async function loadAdminUsers() {
+  const el = document.getElementById('admin-users-list');
+  el.innerHTML = '<div class="loading-text">Caricamento...</div>';
+
+  const { data, error } = await db
+    .from('profili')
+    .select('*, bambini(nome)')
+    .order('created_at', { ascending: false });
+
+  if (error || !data || data.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nessun utente registrato</div>';
+    return;
+  }
+
+  el.innerHTML = data
+    .filter(u => u.email !== 'sarabandalivorno@gmail.com')
+    .map(u => `
+      <div class="admin-booking-card">
+        <div class="booking-header">
+          <div>
+            <div class="booking-title">👤 ${u.nome} ${u.cognome}</div>
+            <div class="booking-meta">Iscritto il ${new Date(u.created_at).toLocaleDateString('it-IT')}</div>
+          </div>
+        </div>
+        <div class="admin-client-info">
+          <div class="admin-info-row">
+            <span class="admin-info-label">Email</span>
+            <a class="admin-info-val admin-link" href="mailto:${u.email}">${u.email}</a>
+          </div>
+          <div class="admin-info-row">
+            <span class="admin-info-label">Telefono</span>
+            <a class="admin-info-val admin-link" href="tel:${u.telefono}">${u.telefono}</a>
+          </div>
+          <div class="admin-info-row">
+            <span class="admin-info-label">Bambini</span>
+            <span class="admin-info-val">${u.bambini?.map(b => b.nome).join(', ') || '—'}</span>
+          </div>
+        </div>
+      </div>`).join('');
+}
+
 function adminClearFilters() {
   document.getElementById('admin-filter-tipo').value = '';
   document.getElementById('admin-filter-data').value = '';
