@@ -8,7 +8,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>Sarabanda</title>
   <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/style.css?v=2" />
+  <link rel="stylesheet" href="css/style.css?v=3" />
 </head>
 <body>
 
@@ -73,6 +73,18 @@
       </div>
     </div>
     <div class="content">
+      <!-- PULSANTE ADMIN (visibile solo all'admin) -->
+      <div id="admin-btn-wrapper" style="display:none;margin-bottom:16px">
+        <button class="admin-access-btn" onclick="showApp('admin')">
+          <span>⚙️</span>
+          <div>
+            <div class="label">Pannello Admin</div>
+            <div class="sublabel">Gestione prenotazioni</div>
+          </div>
+          <div class="chevron">›</div>
+        </button>
+      </div>
+
       <div class="section-title">Scegli un servizio</div>
       <button class="service-btn" onclick="showApp('babyparking')">
         <div class="service-icon icon-green">🧒</div>
@@ -362,6 +374,48 @@
         <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
         <span>Profilo</span>
       </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       PANNELLO ADMIN
+  ═══════════════════════════════════════════ -->
+  <div id="screen-admin" class="app-screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="showApp('home')">‹ Indietro</button>
+      <div class="logo" style="font-size:15px">Admin</div>
+    </div>
+    <div class="content">
+
+      <!-- STATS -->
+      <div class="admin-stats-row">
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" id="admin-stat-tot">—</div>
+          <div class="admin-stat-label">Prenotazioni</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" id="admin-stat-incasso">—</div>
+          <div class="admin-stat-label">Incasso totale</div>
+        </div>
+        <div class="admin-stat-card">
+          <div class="admin-stat-num" id="admin-stat-oggi">—</div>
+          <div class="admin-stat-label">Oggi</div>
+        </div>
+      </div>
+
+      <!-- FILTRI -->
+      <div class="admin-filters">
+        <select id="admin-filter-tipo" class="input-field" onchange="adminApplyFilters()" style="flex:1">
+          <option value="">Tutti i servizi</option>
+          <option value="babyparking">Babyparking</option>
+          <option value="compleanno">Compleanno</option>
+        </select>
+        <input type="date" id="admin-filter-data" class="input-field" onchange="adminApplyFilters()" style="flex:1" />
+        <button class="admin-clear-btn" onclick="adminClearFilters()">✕</button>
+      </div>
+
+      <!-- LISTA PRENOTAZIONI -->
+      <div id="admin-bookings-list"><div class="loading-text">Caricamento...</div></div>
     </div>
   </div>
 
