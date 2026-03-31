@@ -414,8 +414,17 @@
         <button class="admin-clear-btn" onclick="adminClearFilters()">✕</button>
       </div>
 
+      <!-- TAB SWITCH -->
+      <div class="tab-row" style="margin-bottom:16px">
+        <div class="tab active" id="admin-tab-prenotazioni" onclick="adminSwitchTab('prenotazioni')">Prenotazioni</div>
+        <div class="tab" id="admin-tab-utenti" onclick="adminSwitchTab('utenti')">Utenti</div>
+      </div>
+
       <!-- LISTA PRENOTAZIONI -->
       <div id="admin-bookings-list"><div class="loading-text">Caricamento...</div></div>
+
+      <!-- LISTA UTENTI -->
+      <div id="admin-users-list" style="display:none"><div class="loading-text">Caricamento...</div></div>
     </div>
   </div>
 
