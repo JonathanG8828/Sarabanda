@@ -38,6 +38,16 @@ export default async function handler(req, res) {
             <p style="color: #555; line-height: 1.6; margin: 0 0 24px;">
               Ora puoi prenotare il babyparking o la stanza per il compleanno direttamente dall'app.
             </p>
+            ${data.tessere && data.tessere.length > 0 ? `
+            <div style="background:#FFF3CD;border-radius:8px;padding:16px;margin:0 0 24px;">
+              <p style="margin:0 0 8px;color:#854F0B;font-weight:600;font-size:14px;">🎫 Riepilogo tesseramento</p>
+              ${data.tessere.map(t => `<p style="margin:4px 0;color:#854F0B;font-size:13px;">${t.nome}: €${t.importo}</p>`).join('')}
+              <p style="margin:8px 0 0;color:#854F0B;font-size:13px;font-weight:700;">Totale: €${data.totaleTessere}</p>
+              <p style="margin:8px 0 0;color:#854F0B;font-size:12px;">Pagamento: ${data.tesseraPagamento === 'loco' ? 'In loco entro 48h dal primo accesso' : 'Online'}</p>
+            </div>
+            ` : ''}
+            <p style="color:#555;line-height:1.6;margin:0 0 24px;">
+            </p>
             <div style="text-align: center;">
               <a href="https://sarabandalivorno.it" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Apri l'app</a>
             </div>
