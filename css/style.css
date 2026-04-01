@@ -49,7 +49,7 @@ html, body {
   padding: 0; background: #000;
 }
 .auth-screen { display: none; width: 100%; max-width: 400px; }
-.auth-screen.active { display: block; }
+.auth-screen.active { display: block; overflow-y: auto; max-height: 100vh; }
 .auth-logo { font-size: 28px; font-weight: 700; color: #fff; letter-spacing: 3px; text-align: center; margin-bottom: 4px; }
 .auth-sub { font-size: 13px; color: rgba(255,255,255,0.6); text-align: center; margin-bottom: 28px; }
 .auth-card { background: var(--bg-primary); border-radius: var(--radius-lg); padding: 24px; }
