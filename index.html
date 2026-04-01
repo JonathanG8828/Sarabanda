@@ -77,15 +77,32 @@
       <h2>Registrati</h2>
       <div id="register-error" class="error-msg"></div>
       <label>Nome</label>
-      <input type="text" id="reg-nome" placeholder="Mario" />
+      <input type="text" id="reg-nome" placeholder="Marco" />
       <label>Cognome</label>
       <input type="text" id="reg-cognome" placeholder="Rossi" />
       <label>Email</label>
       <input type="email" id="reg-email" placeholder="tuaemail@esempio.it" />
       <label>Telefono</label>
       <input type="tel" id="reg-telefono" placeholder="+39 340 123 4567" />
-      <label>Nome del bambino/a</label>
-      <input type="text" id="reg-bambino" placeholder="Nome del bambino" />
+      <label>Bambini</label>
+      <div id="bambini-list">
+        <div class="bambino-row" id="bambino-0">
+          <input type="text" class="bambino-nome" placeholder="Nome bambino/a" style="margin-bottom:4px" />
+          <div class="bambino-extra" style="display:none">
+            <input type="text" class="bambino-cognome" placeholder="Cognome" style="margin-bottom:4px" />
+            <input type="date" class="bambino-nascita" style="margin-bottom:4px" />
+            <input type="text" class="bambino-luogo" placeholder="Luogo di nascita" style="margin-bottom:4px" />
+            <input type="text" class="bambino-indirizzo" placeholder="Indirizzo di residenza" style="margin-bottom:4px" />
+            <input type="text" class="bambino-cf" placeholder="Codice fiscale" style="margin-bottom:8px" />
+          </div>
+          <button type="button" class="btn-toggle-extra" onclick="toggleBambinoExtra(0)" style="font-size:12px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;margin-bottom:8px;">+ Aggiungi dati completi per tesseramento</button>
+        </div>
+      </div>
+      <button type="button" class="btn-outline" style="margin-top:4px;padding:8px;font-size:13px" onclick="aggiungiBambino()">+ Aggiungi altro bambino/a</button>
+
+      <div style="background:var(--green-light);border-radius:var(--radius-md);padding:10px 12px;margin-top:12px;font-size:12px;color:var(--green-mid);line-height:1.5;">
+        ℹ️ I dati completi per il tesseramento possono essere inseriti ora oppure direttamente in struttura al primo accesso.
+      </div>
       <label>Password</label>
       <input type="password" id="reg-password" placeholder="Minimo 6 caratteri" />
       <button class="btn-primary" onclick="handleRegister()">Crea account</button>
