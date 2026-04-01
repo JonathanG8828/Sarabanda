@@ -24,6 +24,7 @@ let selectedPaymentType = 'loco';
 let adminAllBookings = []; // cache prenotazioni admin
 let tesseraScelta = 'ora'; // 'ora' o 'dopo'
 let tesseraPagamento = 'loco'; // 'loco' o 'online'
+let bambinoCount = 1;
 
 // ═══════════════════════════════════════════
 //  INIZIALIZZAZIONE
