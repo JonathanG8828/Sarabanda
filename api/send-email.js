@@ -42,7 +42,7 @@ export default async function handler(req, res) {
               <a href="https://sarabandalivorno.it" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Apri l'app</a>
             </div>
             <p style="color: #999; font-size: 12px; margin: 32px 0 0; text-align: center;">
-              Sarabanda · Via esempio 1, Livorno · info@sarabandalivorno.it
+              Sarabanda · Viale Ippolito Nievo 30, Livorno · Tel. 334 725 0887 · info@sarabandalivorno.it
             </p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export default async function handler(req, res) {
               <a href="https://sarabandalivorno.it" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Gestisci prenotazione</a>
             </div>
             <p style="color: #999; font-size: 12px; margin: 32px 0 0; text-align: center;">
-              Sarabanda · Via esempio 1, Livorno · info@sarabandalivorno.it
+              Sarabanda · Viale Ippolito Nievo 30, Livorno · Tel. 334 725 0887 · info@sarabandalivorno.it
             </p>
           </div>
         </div>
