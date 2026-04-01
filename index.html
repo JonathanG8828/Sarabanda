@@ -103,6 +103,46 @@
       <div style="background:var(--green-light);border-radius:var(--radius-md);padding:10px 12px;margin-top:12px;font-size:12px;color:var(--green-mid);line-height:1.5;">
         ℹ️ I dati completi per il tesseramento possono essere inseriti ora oppure direttamente in struttura almeno un giorno prima del primo accesso.
       </div>
+
+      <div style="background:var(--amber-light);border-radius:var(--radius-md);padding:12px;margin-top:12px;">
+        <div style="font-size:13px;font-weight:600;color:var(--amber-dark);margin-bottom:8px;">🎫 Tesseramento (obbligatorio per Babyparking e Centro Estivo)</div>
+        <div style="font-size:12px;color:var(--amber-dark);margin-bottom:10px;">1° bambino: €60 · Dal 2° in poi: €40 · Comprende assicurazione e tessera socio</div>
+        <div id="tessera-toggle-row">
+          <div class="payment-opt selected" id="tess-ora" onclick="selectTessera('ora')" style="margin-bottom:8px;">
+            <div class="radio checked" id="radio-tess-ora"></div>
+            <div>
+              <div class="pay-label" style="font-size:13px;">Tesserami ora</div>
+              <div class="pay-sub">Completa il tesseramento durante la registrazione</div>
+            </div>
+          </div>
+          <div class="payment-opt" id="tess-dopo" onclick="selectTessera('dopo')">
+            <div class="radio" id="radio-tess-dopo"></div>
+            <div>
+              <div class="pay-label" style="font-size:13px;">Lo faccio in struttura</div>
+              <div class="pay-sub">Porta i dati entro 48h dal primo accesso</div>
+            </div>
+          </div>
+        </div>
+        <div id="tessera-pagamento-wrapper" style="margin-top:10px;">
+          <div style="font-size:12px;font-weight:600;color:var(--amber-dark);margin-bottom:8px;">Come vuoi pagare il tesseramento?</div>
+          <div class="payment-opt selected" id="tess-pay-loco" onclick="selectTeseraPagamento('loco')" style="margin-bottom:8px;">
+            <div class="radio checked" id="radio-tess-pay-loco"></div>
+            <div>
+              <div class="pay-label" style="font-size:13px;">Paga in loco</div>
+              <div class="pay-sub">Entro 48h dal primo accesso</div>
+            </div>
+          </div>
+          <div class="payment-opt" id="tess-pay-online" onclick="selectTeseraPagamento('online')">
+            <div class="radio" id="radio-tess-pay-online"></div>
+            <div>
+              <div class="pay-label" style="font-size:13px;">Paga ora online</div>
+              <div class="pay-sub">Carta di credito / debito</div>
+            </div>
+          </div>
+        </div>
+        <div id="tessera-totale" style="font-size:13px;font-weight:700;color:var(--amber-dark);margin-top:10px;text-align:right;">Totale tessere: €60</div>
+      </div>
+
       <label>Password</label>
       <input type="password" id="reg-password" placeholder="Minimo 6 caratteri" />
       <button class="btn-primary" onclick="handleRegister()">Crea account</button>
@@ -382,6 +422,11 @@
       <div class="logo">Le mie prenotazioni</div>
     </div>
     <div class="content">
+      <div id="pagamenti-sospeso-wrapper" style="display:none">
+        <div class="section-title">⚠️ Pagamenti in sospeso</div>
+        <div id="pagamenti-sospeso-list"></div>
+      </div>
+      <div class="section-title">Prenotazioni</div>
       <div id="prenotazioni-list"><div class="loading-text">Caricamento...</div></div>
     </div>
     <div class="nav-bar">
