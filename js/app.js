@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     showWrapper('app');
   } else {
     showWrapper('auth');
+    showAuthScreen('landing');
   }
 
   db.auth.onAuthStateChange(async (event, session) => {
