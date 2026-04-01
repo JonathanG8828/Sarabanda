@@ -18,7 +18,43 @@
 <div id="auth-wrapper">
 
   <!-- LOGIN -->
-  <div id="screen-login" class="auth-screen active">
+ <!-- LANDING (schermata pubblica) -->
+<div id="screen-landing" class="auth-screen active">
+    <div class="landing-hero">
+      <img src="img/logo.jpg" alt="Sarabanda" style="width:200px;border-radius:16px;display:block;margin:0 auto 16px;" />
+      <p class="landing-tagline">Il posto dove i tuoi bambini giocano,<br>crescono e vivono <em>momenti magici</em></p>
+    </div>
+    <div class="landing-body">
+      <div class="landing-section-title">I nostri servizi</div>
+      <div class="landing-svc">
+        <div class="landing-svc-icon" style="background:#E8F4FF">🧒</div>
+        <div>
+          <div class="landing-svc-title">Babyparking</div>
+          <div class="landing-svc-sub">Lun–Ven · 8:00–16:00 · da €15/giorno</div>
+        </div>
+      </div>
+      <div class="landing-svc">
+        <div class="landing-svc-icon" style="background:#FFF0F7">🎂</div>
+        <div>
+          <div class="landing-svc-title">Feste di Compleanno</div>
+          <div class="landing-svc-sub">Animazione, truccabimbi · da €100</div>
+        </div>
+      </div>
+      <div class="landing-svc">
+        <div class="landing-svc-icon" style="background:#FFFBF0">☀️</div>
+        <div>
+          <div class="landing-svc-title">Centro Estivo</div>
+          <div class="landing-svc-sub">10 giugno – 28 settembre · Lun–Ven</div>
+        </div>
+      </div>
+      <button class="btn-primary" style="margin-top:20px" onclick="showAuthScreen('login')">Accedi al tuo account</button>
+      <button class="btn-outline" style="margin-top:8px" onclick="showAuthScreen('register')">Crea account gratuito</button>
+      <p style="font-size:11px;color:#999;text-align:center;margin-top:12px;">Viale Ippolito Nievo 30, Livorno · Tel. 334 725 0887</p>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="screen-login" class="auth-screen">
     <div class="auth-logo">SARABANDA</div>
     <div class="auth-sub">Babyparking & Compleanni</div>
     <div class="auth-card">
@@ -29,7 +65,7 @@
       <label>Password</label>
       <input type="password" id="login-password" placeholder="••••••••" />
       <button class="btn-primary" onclick="handleLogin()">Accedi</button>
-      <p class="switch-auth">Non hai un account? <a onclick="showAuthScreen('register')">Registrati</a></p>
+      <p class="switch-auth">← <a onclick="showAuthScreen('landing')">Torna indietro</a></p>
     </div>
   </div>
 
