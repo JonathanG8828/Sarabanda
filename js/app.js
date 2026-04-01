@@ -853,9 +853,9 @@ function aggiungiBambino() {
   div.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
       <span style="font-size:12px;font-weight:600;color:var(--text-secondary)">Bambino/a ${idx + 1}</span>
-      <button type="button" onclick="this.closest('.bambino-row').remove()" style="font-size:12px;color:var(--red-dark);background:none;border:none;cursor:pointer;">Rimuovi</button>
+      <button type="button" onclick="this.closest('.bambino-row').remove(); aggiornaTotaleTessere();" style="font-size:12px;color:var(--red-dark);background:none;border:none;cursor:pointer;">Rimuovi</button>
     </div>
-    <input type="text" class="bambino-nome input-field" placeholder="Nome bambino/a" style="margin-bottom:4px" />
+    <input type="text" class="bambino-nome input-field" placeholder="Nome bambino/a" style="margin-bottom:4px" oninput="aggiornaTotaleTessere()" />
     <div class="bambino-extra" style="display:none">
       <input type="text" class="bambino-cognome input-field" placeholder="Cognome" style="margin-bottom:4px" />
       <input type="date" class="bambino-nascita input-field" style="margin-bottom:4px" />
@@ -866,6 +866,7 @@ function aggiungiBambino() {
     <button type="button" onclick="toggleBambinoExtra(${idx})" style="font-size:12px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;margin-bottom:8px;">+ Aggiungi dati completi per tesseramento</button>
   `;
   list.appendChild(div);
+  aggiornaTotaleTessere();
 }
 
 function toggleBambinoExtra(idx) {
