@@ -102,6 +102,14 @@
         </div>
         <div class="chevron">›</div>
       </button>
+      <button class="service-btn" onclick="showApp('centroestivo')">
+        <div class="service-icon" style="background:#E8F4FD">☀️</div>
+        <div>
+          <div class="label">Centro Estivo</div>
+          <div class="sublabel">10 giugno – 28 settembre</div>
+        </div>
+        <div class="chevron">›</div>
+      </button>
       <div class="section-title" style="margin-top:24px">Prossime prenotazioni</div>
       <div id="home-bookings-list"><div class="loading-text">Caricamento...</div></div>
     </div>
@@ -425,6 +433,31 @@
 
       <!-- LISTA UTENTI -->
       <div id="admin-users-list" style="display:none"><div class="loading-text">Caricamento...</div></div>
+    </div>
+  </div>
+
+  <!-- CENTRO ESTIVO -->
+  <div id="screen-centroestivo" class="app-screen">
+    <div class="top-bar">
+      <button class="back-btn" onclick="showApp('home')">‹ Indietro</button>
+      <div class="logo" style="font-size:15px">Centro Estivo</div>
+    </div>
+    <div class="content">
+      <div class="card" style="margin-bottom:16px">
+        <div class="section-title">Informazioni</div>
+        <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
+          <div>📅 Dal <strong style="color:var(--text-primary)">10 giugno</strong> al <strong style="color:var(--text-primary)">28 settembre</strong></div>
+          <div style="margin-top:6px">📆 Dal <strong style="color:var(--text-primary)">lunedì al venerdì</strong></div>
+          <div style="margin-top:6px">🕗 Orario: <strong style="color:var(--text-primary)">7:30 – 16:00</strong></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="section-title">Tariffe</div>
+        <div style="font-size:13px;color:var(--text-secondary);text-align:center;padding:16px 0">
+          Le tariffe saranno disponibili a breve.
+        </div>
+      </div>
+      <button class="btn-outline" style="margin-top:16px" onclick="showApp('home')">Torna alla home</button>
     </div>
   </div>
 
