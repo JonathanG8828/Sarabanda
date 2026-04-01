@@ -39,7 +39,6 @@ html, body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-tertiary);
   height: 100%;
-  overflow: hidden;
 }
 
 /* ── AUTH ── */
@@ -289,7 +288,7 @@ label:first-child { margin-top: 0; }
 }
 .landing-body {
   background: var(--bg-primary);
-  padding: 20px 24px 8px;
+  padding: 20px 24px 32px;
 }
 .landing-section-title {
   font-size: 11px;
