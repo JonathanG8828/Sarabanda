@@ -103,8 +103,13 @@ async function handleRegister() {
   const errEl = document.getElementById('register-error');
   errEl.classList.remove('visible');
 
-  if (!nome || !cognome || !email || !telefono || !bambino || !password) {
+  if (!nome || !cognome || !email || !telefono || !password) {
     showError(errEl, 'Compila tutti i campi.');
+    return;
+  }
+  const primoNomeBambino = document.querySelector('.bambino-nome')?.value.trim();
+  if (!primoNomeBambino) {
+    showError(errEl, 'Inserisci almeno il nome di un bambino/a.');
     return;
   }
   if (password.length < 6) {
@@ -126,11 +131,28 @@ async function handleRegister() {
   });
   if (profErr) { showError(errEl, 'Errore nel salvataggio profilo.'); return; }
 
-  // Crea bambino
-  const { error: bamErr } = await db.from('bambini').insert({
-    profilo_id: userId, nome: bambino
-  });
-  if (bamErr) { showError(errEl, 'Errore nel salvataggio bambino.'); return; }
+  // Crea bambini (uno o più)
+  const bambinoRows = document.querySelectorAll('.bambino-row');
+  for (const row of bambinoRows) {
+    const nome = row.querySelector('.bambino-nome')?.value.trim();
+    if (!nome) continue;
+    const cognome = row.querySelector('.bambino-cognome')?.value.trim() || null;
+    const dataNascita = row.querySelector('.bambino-nascita')?.value || null;
+    const luogoNascita = row.querySelector('.bambino-luogo')?.value.trim() || null;
+    const indirizzo = row.querySelector('.bambino-indirizzo')?.value.trim() || null;
+    const codiceFiscale = row.querySelector('.bambino-cf')?.value.trim() || null;
+
+    const { error: bamErr } = await db.from('bambini').insert({
+      profilo_id: userId,
+      nome,
+      cognome,
+      data_nascita: dataNascita,
+      luogo_nascita: luogoNascita,
+      indirizzo,
+      codice_fiscale: codiceFiscale
+    });
+    if (bamErr) { showError(errEl, 'Errore nel salvataggio bambino.'); return; }
+  }
 
   // Invia email di benvenuto
   await sendEmail('benvenuto', { nome, cognome, email, telefono });
@@ -726,6 +748,47 @@ async function adminAnnulla(id) {
   adminAllBookings = adminAllBookings.filter(x => x.id !== id);
   adminApplyFilters();
   adminUpdateStats();
+}
+
+// ═══════════════════════════════════════════
+//  GESTIONE BAMBINI IN REGISTRAZIONE
+// ═══════════════════════════════════════════
+let bambinoCount = 1;
+
+function aggiungiBambino() {
+  const list = document.getElementById('bambini-list');
+  const idx = bambinoCount++;
+  const div = document.createElement('div');
+  div.className = 'bambino-row';
+  div.id = `bambino-${idx}`;
+  div.style.cssText = 'border-top:0.5px solid var(--border);padding-top:10px;margin-top:8px;';
+  div.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+      <span style="font-size:12px;font-weight:600;color:var(--text-secondary)">Bambino/a ${idx + 1}</span>
+      <button type="button" onclick="this.closest('.bambino-row').remove()" style="font-size:12px;color:var(--red-dark);background:none;border:none;cursor:pointer;">Rimuovi</button>
+    </div>
+    <input type="text" class="bambino-nome input-field" placeholder="Nome bambino/a" style="margin-bottom:4px" />
+    <div class="bambino-extra" style="display:none">
+      <input type="text" class="bambino-cognome input-field" placeholder="Cognome" style="margin-bottom:4px" />
+      <input type="date" class="bambino-nascita input-field" style="margin-bottom:4px" />
+      <input type="text" class="bambino-luogo input-field" placeholder="Luogo di nascita" style="margin-bottom:4px" />
+      <input type="text" class="bambino-indirizzo input-field" placeholder="Indirizzo di residenza" style="margin-bottom:4px" />
+      <input type="text" class="bambino-cf input-field" placeholder="Codice fiscale" style="margin-bottom:8px" />
+    </div>
+    <button type="button" onclick="toggleBambinoExtra(${idx})" style="font-size:12px;color:var(--green);background:none;border:none;cursor:pointer;padding:0;margin-bottom:8px;">+ Aggiungi dati completi per tesseramento</button>
+  `;
+  list.appendChild(div);
+}
+
+function toggleBambinoExtra(idx) {
+  const row = document.getElementById(`bambino-${idx}`);
+  if (!row) return;
+  const extra = row.querySelector('.bambino-extra');
+  const btn = row.querySelector('.btn-toggle-extra') || row.querySelectorAll('button')[1];
+  if (!extra) return;
+  const isVisible = extra.style.display !== 'none';
+  extra.style.display = isVisible ? 'none' : 'block';
+  if (btn) btn.textContent = isVisible ? '+ Aggiungi dati completi per tesseramento' : '− Nascondi dati tesseramento';
 }
 
 // ═══════════════════════════════════════════
