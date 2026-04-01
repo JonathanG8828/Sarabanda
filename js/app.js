@@ -22,6 +22,8 @@ let selectedTariffName = '';
 let selectedTariffPrice = 0;
 let selectedPaymentType = 'loco';
 let adminAllBookings = []; // cache prenotazioni admin
+let tesseraScelta = 'ora'; // 'ora' o 'dopo'
+let tesseraPagamento = 'loco'; // 'loco' o 'online'
 
 // ═══════════════════════════════════════════
 //  INIZIALIZZAZIONE
@@ -98,7 +100,6 @@ async function handleRegister() {
   const cognome = document.getElementById('reg-cognome').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const telefono = document.getElementById('reg-telefono').value.trim();
-  const bambino = document.getElementById('reg-bambino').value.trim();
   const password = document.getElementById('reg-password').value;
   const errEl = document.getElementById('register-error');
   errEl.classList.remove('visible');
@@ -125,37 +126,59 @@ async function handleRegister() {
 
   const userId = data.user.id;
 
-  // Crea profilo
   const { error: profErr } = await db.from('profili').insert({
     id: userId, nome, cognome, email, telefono
   });
   if (profErr) { showError(errEl, 'Errore nel salvataggio profilo.'); return; }
 
-  // Crea bambini (uno o più)
+  // Crea bambini e tessere
   const bambinoRows = document.querySelectorAll('.bambino-row');
+  const bambiniCreati = [];
+  let idx = 0;
   for (const row of bambinoRows) {
-    const nome = row.querySelector('.bambino-nome')?.value.trim();
-    if (!nome) continue;
-    const cognome = row.querySelector('.bambino-cognome')?.value.trim() || null;
+    const nomeBambino = row.querySelector('.bambino-nome')?.value.trim();
+    if (!nomeBambino) continue;
+    const cognomeBambino = row.querySelector('.bambino-cognome')?.value.trim() || null;
     const dataNascita = row.querySelector('.bambino-nascita')?.value || null;
     const luogoNascita = row.querySelector('.bambino-luogo')?.value.trim() || null;
     const indirizzo = row.querySelector('.bambino-indirizzo')?.value.trim() || null;
     const codiceFiscale = row.querySelector('.bambino-cf')?.value.trim() || null;
 
-    const { error: bamErr } = await db.from('bambini').insert({
+    const { data: bamData, error: bamErr } = await db.from('bambini').insert({
       profilo_id: userId,
-      nome,
-      cognome,
+      nome: nomeBambino,
+      cognome: cognomeBambino,
       data_nascita: dataNascita,
       luogo_nascita: luogoNascita,
       indirizzo,
       codice_fiscale: codiceFiscale
-    });
+    }).select().single();
     if (bamErr) { showError(errEl, 'Errore nel salvataggio bambino.'); return; }
+
+    // Crea tessera se il genitore sceglie di tesserare ora
+    if (tesseraScelta === 'ora') {
+      const importo = idx === 0 ? 60 : 40;
+      await db.from('tessere').insert({
+        profilo_id: userId,
+        bambino_id: bamData.id,
+        importo,
+        pagamento: tesseraPagamento,
+        stato: 'in_attesa',
+        anno: new Date().getFullYear()
+      });
+      bambiniCreati.push({ nome: nomeBambino, importo });
+    }
+    idx++;
   }
 
-  // Invia email di benvenuto
-  await sendEmail('benvenuto', { nome, cognome, email, telefono });
+  // Email benvenuto + tessere
+  const totaleTessere = bambiniCreati.reduce((s, b) => s + b.importo, 0);
+  await sendEmail('benvenuto', {
+    nome, cognome, email, telefono,
+    tessere: bambiniCreati,
+    totaleTessere,
+    tesseraPagamento: tesseraScelta === 'ora' ? tesseraPagamento : null
+  });
 }
 
 // ═══════════════════════════════════════════
@@ -206,7 +229,7 @@ function showApp(screenName) {
   document.getElementById('screen-' + screenName).classList.add('active');
 
   if (screenName === 'home') loadHomeBookings();
-  if (screenName === 'prenotazioni') loadPrenotazioni();
+  if (screenName === 'prenotazioni') { loadPrenotazioni(); loadPagamentiSospeso(); }
   if (screenName === 'admin') {
     // Solo l'admin può accedere
     if (currentUser?.email !== ADMIN_EMAIL) {
@@ -500,6 +523,40 @@ async function loadHomeBookings() {
 // ═══════════════════════════════════════════
 //  CARICA TUTTE LE PRENOTAZIONI
 // ═══════════════════════════════════════════
+
+// ═══════════════════════════════════════════
+//  PAGAMENTI IN SOSPESO
+// ═══════════════════════════════════════════
+async function loadPagamentiSospeso() {
+  const { data } = await db
+    .from('tessere')
+    .select('*, bambini(nome)')
+    .eq('profilo_id', currentUser.id)
+    .eq('stato', 'in_attesa');
+
+  const wrapper = document.getElementById('pagamenti-sospeso-wrapper');
+  const list = document.getElementById('pagamenti-sospeso-list');
+  if (!data || data.length === 0) {
+    wrapper.style.display = 'none';
+    return;
+  }
+  wrapper.style.display = 'block';
+  const totale = data.reduce((s, t) => s + parseFloat(t.importo), 0);
+  list.innerHTML = data.map(t => `
+    <div class="booking-card" style="border-left:3px solid var(--amber-dark)">
+      <div class="booking-header">
+        <div>
+          <div class="booking-title">🎫 Tessera — ${t.bambini?.nome || '—'}</div>
+          <div class="booking-meta">Anno ${t.anno} · ${t.pagamento === 'loco' ? 'Paga in loco entro 48h' : 'Pagamento online'}</div>
+        </div>
+        <span class="badge badge-amber">In attesa</span>
+      </div>
+      <div class="booking-pkg">Tesseramento + assicurazione · <strong>€${t.importo}</strong></div>
+    </div>
+  `).join('') + `
+    <div style="text-align:right;font-size:14px;font-weight:700;color:var(--amber-dark);margin-bottom:16px;">Totale da pagare: €${totale}</div>
+  `;
+}
 async function loadPrenotazioni() {
   const el = document.getElementById('prenotazioni-list');
   el.innerHTML = '<div class="loading-text">Caricamento...</div>';
@@ -751,9 +808,40 @@ async function adminAnnulla(id) {
 }
 
 // ═══════════════════════════════════════════
-//  GESTIONE BAMBINI IN REGISTRAZIONE
+//  TESSERAMENTO
 // ═══════════════════════════════════════════
-let bambinoCount = 1;
+function selectTessera(scelta) {
+  tesseraScelta = scelta;
+  document.getElementById('tess-ora').classList.toggle('selected', scelta === 'ora');
+  document.getElementById('tess-dopo').classList.toggle('selected', scelta === 'dopo');
+  document.getElementById('radio-tess-ora').className = 'radio' + (scelta === 'ora' ? ' checked' : '');
+  document.getElementById('radio-tess-dopo').className = 'radio' + (scelta === 'dopo' ? ' checked' : '');
+  document.getElementById('tessera-pagamento-wrapper').style.display = scelta === 'ora' ? 'block' : 'none';
+  aggiornaTotaleTessere();
+}
+
+function selectTeseraPagamento(tipo) {
+  tesseraPagamento = tipo;
+  document.getElementById('tess-pay-loco').classList.toggle('selected', tipo === 'loco');
+  document.getElementById('tess-pay-online').classList.toggle('selected', tipo === 'online');
+  document.getElementById('radio-tess-pay-loco').className = 'radio' + (tipo === 'loco' ? ' checked' : '');
+  document.getElementById('radio-tess-pay-online').className = 'radio' + (tipo === 'online' ? ' checked' : '');
+}
+
+function aggiornaTotaleTessere() {
+  if (tesseraScelta !== 'ora') {
+    document.getElementById('tessera-totale').textContent = '';
+    return;
+  }
+  const rows = document.querySelectorAll('.bambino-row');
+  let tot = 0;
+  let idx = 0;
+  rows.forEach(r => {
+    const n = r.querySelector('.bambino-nome')?.value.trim();
+    if (n) { tot += idx === 0 ? 60 : 40; idx++; }
+  });
+  document.getElementById('tessera-totale').textContent = `Totale tessere: €${tot}`;
+}
 
 function aggiungiBambino() {
   const list = document.getElementById('bambini-list');
