@@ -521,10 +521,6 @@ async function loadHomeBookings() {
 }
 
 // ═══════════════════════════════════════════
-//  CARICA TUTTE LE PRENOTAZIONI
-// ═══════════════════════════════════════════
-
-// ═══════════════════════════════════════════
 //  PAGAMENTI IN SOSPESO
 // ═══════════════════════════════════════════
 async function loadPagamentiSospeso() {
@@ -557,6 +553,10 @@ async function loadPagamentiSospeso() {
     <div style="text-align:right;font-size:14px;font-weight:700;color:var(--amber-dark);margin-bottom:16px;">Totale da pagare: €${totale}</div>
   `;
 }
+// ═══════════════════════════════════════════
+//  CARICA TUTTE LE PRENOTAZIONI
+// ═══════════════════════════════════════════
+
 async function loadPrenotazioni() {
   const el = document.getElementById('prenotazioni-list');
   el.innerHTML = '<div class="loading-text">Caricamento...</div>';
