@@ -140,6 +140,12 @@ async function handleRegister() {
 // ═══════════════════════════════════════════
 async function handleLogout() {
   await db.auth.signOut();
+  currentUser = null;
+  currentProfile = null;
+  currentBambini = [];
+  adminAllBookings = [];
+  showWrapper('auth');
+  showAuthScreen('login');
 }
 
 // ═══════════════════════════════════════════
