@@ -458,13 +458,14 @@ async function loadHomeBookings() {
     .neq('stato', 'annullata')
     .gte('data_prenotazione', today)
     .order('data_prenotazione', { ascending: true })
-    .limit(3);
+    .limit(2);
 
   if (error || !data || data.length === 0) {
     el.innerHTML = '<p style="font-size:13px;color:var(--text-secondary);padding:8px 0">Nessuna prenotazione imminente</p>';
     return;
   }
-  el.innerHTML = data.map(b => bookingCardHTML(b, false)).join('');
+  el.innerHTML = data.map(b => bookingCardHTML(b, false)).join('') +
+    '<button class="btn-outline" style="margin-top:8px;font-size:13px;padding:10px" onclick="showApp(\'prenotazioni\')">Vedi tutte →</button>';
 }
 
 // ═══════════════════════════════════════════
@@ -501,7 +502,7 @@ function bookingCardHTML(b, showCancel) {
     <div class="booking-card" id="booking-${b.id}">
       <div class="booking-header">
         <div>
-          <div class="booking-title">${b.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} — ${nomeB}</div>
+          <div class="booking-title">${b.tipo_servizio === 'babyparking' ? 'Babyparking' : b.tipo_servizio === 'centro_estivo' ? 'Centro Estivo' : 'Compleanno'} — ${nomeB}</div>
           <div class="booking-meta">${dataFmt}</div>
         </div>
         <span class="badge ${badgeClass}">${badgeLabel}</span>
