@@ -110,11 +110,7 @@ export default async function handler(req, res) {
                     data.pagamento === 'bonifico' ? 'Bonifico bancario' : data.pagamento
                   }</td>
                 </tr>
-                ${data.pagamento === 'postepay' ? `
-                <tr style="border-bottom: 1px solid #f0f0f0;">
-                  <td style="padding: 12px 16px; color: #888;">Dati Postepay</td>
-                  <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-size:13px;">5333 1712 3552 5207<br>Greco Sara</td>
-                </tr>` : ''}
+                
                 ${data.pagamento === 'bonifico' ? `
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 12px 16px; color: #888;">Dati Bonifico</td>
