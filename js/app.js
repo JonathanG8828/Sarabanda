@@ -947,6 +947,15 @@ function toggleBambinoExtra(idx) {
 }
 
 // ═══════════════════════════════════════════
+//  TOGGLE PASSWORD VISIBILE
+// ═══════════════════════════════════════════
+function togglePassword(inputId, btn) {
+  const input = document.getElementById(inputId);
+  const isPassword = input.type === 'password';
+  input.type = isPassword ? 'text' : 'password';
+  btn.style.color = isPassword ? 'var(--green)' : 'var(--text-tertiary)';
+}
+// ═══════════════════════════════════════════
 //  UTILITY
 // ═══════════════════════════════════════════
 function showError(el, msg) {
