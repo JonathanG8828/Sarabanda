@@ -641,7 +641,7 @@ async function loadPrenotazioni() {
 function bookingCardHTML(b, showCancel) {
   const dataFmt = new Date(b.data_prenotazione + 'T12:00:00').toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' });
   const badgeClass = b.stato === 'confermata' ? 'badge-green' : b.stato === 'in_attesa' ? 'badge-amber' : 'badge-red';
-  const badgeLabel = b.stato === 'confermata' ? 'Confermata' : b.stato === 'in_attesa' ? 'In attesa' : 'Annullata';
+  const badgeLabel = b.stato === 'confermata' ? 'Confermata' : b.stato === 'in_attesa' ? 'In attesa pagamento' : 'Annullata';
   const nomeB = b.bambini?.nome || '—';
 
   return `
@@ -654,6 +654,7 @@ function bookingCardHTML(b, showCancel) {
         <span class="badge ${badgeClass}">${badgeLabel}</span>
       </div>
       <div class="booking-pkg">${b.pacchetto} · €${b.prezzo}</div>
+      ${b.stato === 'in_attesa' && b.pagamento === 'bonifico' ? `<div style="font-size:11px;color:#185FA5;background:#E6F1FB;padding:6px 10px;border-radius:6px;margin-top:6px;">In attesa di conferma bonifico — IBAN: IT38C0503413904000000002594</div>` : ''}
       ${showCancel ? `<div class="divider"></div><button class="cancel-btn" onclick="cancellaPrenotazione('${b.id}')">Elimina prenotazione</button>` : ''}
     </div>`;
 }
