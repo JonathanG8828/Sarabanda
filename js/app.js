@@ -127,8 +127,14 @@ async function handleRegister() {
 
   const userId = data.user.id;
 
+  const serviziInteresse = [];
+  if (document.getElementById('svc-babyparking')?.checked) serviziInteresse.push('babyparking');
+  if (document.getElementById('svc-compleanno')?.checked) serviziInteresse.push('compleanno');
+  if (document.getElementById('svc-centroestivo')?.checked) serviziInteresse.push('centro_estivo');
+
   const { error: profErr } = await db.from('profili').insert({
-    id: userId, nome, cognome, email, telefono
+    id: userId, nome, cognome, email, telefono,
+    servizi_interesse: serviziInteresse
   });
   if (profErr) { showError(errEl, 'Errore nel salvataggio profilo.'); return; }
 
@@ -873,6 +879,73 @@ async function adminAnnulla(id) {
   adminUpdateStats();
 }
 
+// ═══════════════════════════════════════════
+//  REGISTRAZIONE A STEP
+// ═══════════════════════════════════════════
+let regCurrentStep = 1;
+
+function regShowStep(step) {
+  ['1','2','3','finale'].forEach(s => {
+    const el = document.getElementById('reg-step-' + s);
+    if (el) el.style.display = 'none';
+  });
+  const target = document.getElementById('reg-step-' + step);
+  if (target) target.style.display = 'block';
+  regCurrentStep = step;
+
+  // Aggiorna barra progressione
+  const stepNum = step === 'finale' ? 3 : parseInt(step);
+  ['1','2','3'].forEach((s, i) => {
+    const bar = document.getElementById('step-bar-' + s);
+    if (bar) bar.style.background = i < stepNum ? 'var(--green)' : 'var(--border)';
+  });
+
+  // Aggiorna label
+  const labels = { '1': 'Passo 1 di 3 — Dati personali', '2': 'Passo 2 di 3 — I tuoi bambini', '3': 'Passo 3 di 3 — Tesseramento', 'finale': 'Ultimo passo — Conferma' };
+  const lbl = document.getElementById('step-label');
+  if (lbl) lbl.textContent = labels[step] || '';
+}
+
+function regNextStep(from) {
+  const errEl = document.getElementById('register-error');
+  errEl.classList.remove('visible');
+
+  if (from === 1) {
+    const nome = document.getElementById('reg-nome').value.trim();
+    const cognome = document.getElementById('reg-cognome').value.trim();
+    const email = document.getElementById('reg-email').value.trim();
+    const telefono = document.getElementById('reg-telefono').value.trim();
+    const password = document.getElementById('reg-password').value;
+    if (!nome || !cognome || !email || !telefono || !password) {
+      showError(errEl, 'Compila tutti i campi.');
+      return;
+    }
+    if (password.length < 6) {
+      showError(errEl, 'La password deve essere di almeno 6 caratteri.');
+      return;
+    }
+    regShowStep(2);
+  }
+
+  if (from === 2) {
+    const primoNome = document.querySelector('.bambino-nome')?.value.trim();
+    if (!primoNome) {
+      showError(errEl, 'Inserisci almeno il nome di un bambino/a.');
+      return;
+    }
+    // Controlla se ha scelto babyparking o centro estivo
+    const needsTessera = document.getElementById('svc-babyparking')?.checked ||
+                         document.getElementById('svc-centroestivo')?.checked;
+    aggiornaTotaleTessere();
+    regShowStep(needsTessera ? 3 : 'finale');
+  }
+}
+
+function regPrevStep(from) {
+  if (from === 2) regShowStep(1);
+  if (from === 3) regShowStep(2);
+  if (from === 'finale') regShowStep(2);
+}
 // ═══════════════════════════════════════════
 //  TESSERAMENTO
 // ═══════════════════════════════════════════
