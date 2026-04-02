@@ -319,6 +319,10 @@ async function goToConferma(tipo) {
 }
 
 async function caricaDateOccupate(tipo) {
+  if (tipo === 'centro_estivo') {
+    calDateOccupate = [];
+    return;
+  }
   const { data } = await db
     .from('prenotazioni')
     .select('data_prenotazione')
