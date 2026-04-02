@@ -438,11 +438,12 @@ function renderOrari(dow) {
 
 function selectPayment(type) {
   selectedPaymentType = type;
-  const isOnline = type === 'online';
-  document.getElementById('pay-loco').classList.toggle('selected', !isOnline);
-  document.getElementById('pay-online').classList.toggle('selected', isOnline);
-  document.getElementById('radio-loco').className = 'radio' + (!isOnline ? ' checked' : '');
-  document.getElementById('radio-online').className = 'radio' + (isOnline ? ' checked' : '');
+  ['loco', 'postepay', 'bonifico'].forEach(t => {
+    const opt = document.getElementById('pay-' + t);
+    const radio = document.getElementById('radio-' + t);
+    if (opt) opt.classList.toggle('selected', t === type);
+    if (radio) radio.className = 'radio' + (t === type ? ' checked' : '');
+  });
 }
 
 async function salvaPrenotazione() {
@@ -467,7 +468,7 @@ async function salvaPrenotazione() {
     prezzo: selectedTariffPrice,
     data_prenotazione: data,
     pagamento: selectedPaymentType,
-    stato: selectedPaymentType === 'online' ? 'in_attesa' : 'confermata'
+    stato: selectedPaymentType === 'loco' ? 'confermata' : 'in_attesa'
   });
 
   if (error) {
