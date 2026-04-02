@@ -104,8 +104,22 @@ export default async function handler(req, res) {
                 </tr>
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td style="padding: 12px 16px; color: #888;">Pagamento</td>
-                  <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-weight: 500;">${data.pagamento === 'loco' ? 'In loco all\'arrivo' : 'Online'}</td>
+                  <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-weight: 500;">${
+                    data.pagamento === 'loco' ? 'In loco (contanti o POS)' :
+                    data.pagamento === 'postepay' ? 'Postepay' :
+                    data.pagamento === 'bonifico' ? 'Bonifico bancario' : data.pagamento
+                  }</td>
                 </tr>
+                ${data.pagamento === 'postepay' ? `
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                  <td style="padding: 12px 16px; color: #888;">Dati Postepay</td>
+                  <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-size:13px;">5333 1712 3552 5207<br>Greco Sara</td>
+                </tr>` : ''}
+                ${data.pagamento === 'bonifico' ? `
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                  <td style="padding: 12px 16px; color: #888;">Dati Bonifico</td>
+                  <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-size:13px;">IT38C0503413904000000002594<br>Associazione Sarabanda<br>BIC: BAPPIT21T01</td>
+                </tr>` : ''}
                 <tr>
                   <td style="padding: 12px 16px; color: #888; font-weight: 600;">Totale</td>
                   <td style="padding: 12px 16px; color: #1A3D2E; text-align: right; font-weight: 700; font-size: 16px;">€${data.prezzo}</td>
