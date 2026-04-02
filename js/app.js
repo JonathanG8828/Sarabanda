@@ -260,6 +260,14 @@ function switchBpTab(el, tabId) {
   });
 }
 
+function switchCeTab(el, tabId) {
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  ['giornaliero','settimanale','mensile','ore'].forEach(id => {
+    document.getElementById('ce-' + id).style.display = id === tabId ? 'block' : 'none';
+  });
+}
+
 // ═══════════════════════════════════════════
 //  CALENDARIO
 // ═══════════════════════════════════════════
