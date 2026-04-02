@@ -541,7 +541,7 @@
       <div class="logo" style="font-size:15px">Centro Estivo</div>
     </div>
     <div class="content">
-      <div class="card" style="margin-bottom:16px">
+      <div class="card" style="margin-bottom:12px">
         <div class="section-title">Informazioni</div>
         <div style="font-size:13px;color:var(--text-secondary);line-height:1.7">
           <div>📅 Dal <strong style="color:var(--text-primary)">10 giugno</strong> al <strong style="color:var(--text-primary)">28 settembre</strong></div>
@@ -549,12 +549,77 @@
           <div style="margin-top:6px">🕗 Orario: <strong style="color:var(--text-primary)">7:30 – 16:00</strong></div>
         </div>
       </div>
-      <div class="card">
-        <div class="section-title">Tariffe</div>
-        <div style="font-size:13px;color:var(--text-secondary);text-align:center;padding:16px 0">
-          Le tariffe saranno disponibili a breve.
+
+      <div class="tab-row">
+        <div class="tab active" onclick="switchCeTab(this,'giornaliero')">Giorno</div>
+        <div class="tab" onclick="switchCeTab(this,'settimanale')">Sett.</div>
+        <div class="tab" onclick="switchCeTab(this,'mensile')">Mese</div>
+        <div class="tab" onclick="switchCeTab(this,'ore')">Ore</div>
+      </div>
+
+      <div id="ce-giornaliero">
+        <div class="section-title">Orario di uscita</div>
+        <div class="tariff-row" onclick="selectTariff(this,'Giornaliero fino 12:30',15)">
+          <div class="tariff-name">Fino alle 12:30</div>
+          <div class="tariff-price">€15</div>
+        </div>
+        <div class="tariff-row" onclick="selectTariff(this,'Giornaliero fino 14:30',20)">
+          <div class="tariff-name">Fino alle 14:30</div>
+          <div class="tariff-price">€20</div>
+        </div>
+        <div class="tariff-row" onclick="selectTariff(this,'Giornaliero fino 16:00',25)">
+          <div class="tariff-name">Fino alle 16:00</div>
+          <div class="tariff-price">€25</div>
         </div>
       </div>
+
+      <div id="ce-settimanale" style="display:none">
+        <div class="section-title">Orario di uscita</div>
+        <div class="tariff-row" onclick="selectTariff(this,'Settimanale fino 12:30',70)">
+          <div class="tariff-name">Fino alle 12:30</div>
+          <div class="tariff-price">€70</div>
+        </div>
+        <div class="tariff-row" onclick="selectTariff(this,'Settimanale fino 14:00',80)">
+          <div class="tariff-name">Fino alle 14:00</div>
+          <div class="tariff-price">€80</div>
+        </div>
+        <div class="tariff-row" onclick="selectTariff(this,'Settimanale fino 16:00',90)">
+          <div class="tariff-name">Fino alle 16:00</div>
+          <div class="tariff-price">€90</div>
+        </div>
+      </div>
+
+      <div id="ce-mensile" style="display:none">
+        <div class="section-title">Orario di uscita</div>
+        <div class="tariff-row" onclick="selectTariff(this,'Mensile fino 12:30',180)">
+          <div class="tariff-name">Fino alle 12:30</div>
+          <div class="tariff-price">€180</div>
+        </div>
+        <div class="tariff-row" onclick="selectTariff(this,'Mensile fino 16:00',200)">
+          <div class="tariff-name">Fino alle 16:00</div>
+          <div class="tariff-price">€200</div>
+        </div>
+      </div>
+
+      <div id="ce-ore" style="display:none">
+        <div class="section-title">Pacchetto ore</div>
+        <div class="tariff-row" onclick="selectTariff(this,'Pacchetto 30 ore',100)">
+          <div><div class="tariff-name">30 ore</div><div class="tariff-detail">€3.33/ora</div></div>
+          <div class="tariff-price">€100</div>
+        </div>
+        <div class="tariff-row" onclick="selectTariff(this,'Pacchetto 60 ore',160)">
+          <div><div class="tariff-name">60 ore</div><div class="tariff-detail">€2.67/ora</div></div>
+          <div class="tariff-price">€160</div>
+        </div>
+        <div class="tariff-row" onclick="selectTariff(this,'Pacchetto 120 ore',250)">
+          <div><div class="tariff-name">120 ore</div><div class="tariff-detail">€2.08/ora</div></div>
+          <div class="tariff-price">€250</div>
+        </div>
+      </div>
+
+      <button class="btn-primary" style="margin-top:24px" onclick="goToConferma('centro_estivo')">Continua →</button>
+    </div>
+  </div>
       <button class="btn-outline" style="margin-top:16px" onclick="showApp('home')">Torna alla home</button>
     </div>
   </div>
