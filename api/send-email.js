@@ -113,8 +113,13 @@ export default async function handler(req, res) {
                 
                 ${data.pagamento === 'bonifico' ? `
                 <tr style="border-bottom: 1px solid #f0f0f0;">
-                  <td style="padding: 12px 16px; color: #888;">Dati Bonifico</td>
-                  <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-size:13px;">IT38C0503413904000000002594<br>Associazione Sarabanda<br>BIC: BAPPIT21T01</td>
+                  <td colspan="2" style="padding: 12px 16px;">
+                    <div style="font-size:12px;color:#888;margin-bottom:6px;">Dati per il bonifico</div>
+                    <div style="font-size:13px;color:#1a1a1a;font-weight:500;">IBAN: IT38C0503413904000000002594</div>
+                    <div style="font-size:13px;color:#1a1a1a;">Intestatario: Associazione Sarabanda</div>
+                    <div style="font-size:13px;color:#1a1a1a;">BIC/SWIFT: BAPPIT21T01</div>
+                    <div style="font-size:12px;color:#888;margin-top:4px;">Causale: Prenotazione ${data.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} - ${data.nome_bambino}</div>
+                  </td>
                 </tr>` : ''}
                 <tr>
                   <td style="padding: 12px 16px; color: #888; font-weight: 600;">Totale</td>
