@@ -66,10 +66,25 @@ html, body {
 
 /* ── TOP BAR ── */
 .top-bar {
-  background: var(--green); color: #fff;
+  background: var(--green);
+  background-image: url('../img/banner.png');
+  background-size: cover;
+  background-position: center;
+  color: #fff;
   padding: 52px 20px 16px;
   display: flex; align-items: center; gap: 12px;
   flex-shrink: 0;
+  position: relative;
+}
+.top-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 61, 46, 0.72);
+}
+.top-bar > * {
+  position: relative;
+  z-index: 1;
 }
 .logo { font-size: 18px; font-weight: 700; letter-spacing: 2px; flex: 1; }
 .greeting { font-size: 12px; opacity: 0.65; margin-top: 2px; }
