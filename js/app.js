@@ -525,34 +525,74 @@ async function loadHomeBookings() {
 //  PAGAMENTI IN SOSPESO
 // ═══════════════════════════════════════════
 async function loadPagamentiSospeso() {
-  const { data } = await db
+  const wrapper = document.getElementById('pagamenti-sospeso-wrapper');
+  const list = document.getElementById('pagamenti-sospeso-list');
+
+  // Carica tessere in attesa
+  const { data: tessere } = await db
     .from('tessere')
     .select('*, bambini(nome)')
     .eq('profilo_id', currentUser.id)
     .eq('stato', 'in_attesa');
 
-  const wrapper = document.getElementById('pagamenti-sospeso-wrapper');
-  const list = document.getElementById('pagamenti-sospeso-list');
-  if (!data || data.length === 0) {
+  // Carica prenotazioni in loco non ancora pagate
+  const { data: prenotazioni } = await db
+    .from('prenotazioni')
+    .select('*, bambini(nome)')
+    .eq('profilo_id', currentUser.id)
+    .eq('pagamento', 'loco')
+    .eq('pagato', false)
+    .neq('stato', 'annullata');
+
+  const hasTessere = tessere && tessere.length > 0;
+  const hasPren = prenotazioni && prenotazioni.length > 0;
+
+  if (!hasTessere && !hasPren) {
     wrapper.style.display = 'none';
     return;
   }
+
   wrapper.style.display = 'block';
-  const totale = data.reduce((s, t) => s + parseFloat(t.importo), 0);
-  list.innerHTML = data.map(t => `
-    <div class="booking-card" style="border-left:3px solid var(--amber-dark)">
-      <div class="booking-header">
-        <div>
-          <div class="booking-title">🎫 Tessera — ${t.bambini?.nome || '—'}</div>
-          <div class="booking-meta">Anno ${t.anno} · ${t.pagamento === 'loco' ? 'Paga in loco entro 48h' : 'Pagamento online'}</div>
-        </div>
-        <span class="badge badge-amber">In attesa</span>
-      </div>
-      <div class="booking-pkg">Tesseramento + assicurazione · <strong>€${t.importo}</strong></div>
-    </div>
-  `).join('') + `
-    <div style="text-align:right;font-size:14px;font-weight:700;color:var(--amber-dark);margin-bottom:16px;">Totale da pagare: €${totale}</div>
-  `;
+  let html = '';
+  let totale = 0;
+
+  if (hasTessere) {
+    tessere.forEach(t => {
+      totale += parseFloat(t.importo);
+      html += `
+        <div class="booking-card" style="border-left:3px solid var(--amber-dark)">
+          <div class="booking-header">
+            <div>
+              <div class="booking-title">🎫 Tessera — ${t.bambini?.nome || '—'}</div>
+              <div class="booking-meta">Anno ${t.anno} · ${t.pagamento === 'loco' ? 'Paga in loco entro 48h' : 'Pagamento online'}</div>
+            </div>
+            <span class="badge badge-amber">In attesa</span>
+          </div>
+          <div class="booking-pkg">Tesseramento + assicurazione · <strong>€${t.importo}</strong></div>
+        </div>`;
+    });
+  }
+
+  if (hasPren) {
+    prenotazioni.forEach(p => {
+      totale += parseFloat(p.prezzo);
+      const dataFmt = new Date(p.data_prenotazione + 'T12:00:00').toLocaleDateString('it-IT', { weekday: 'short', day: 'numeric', month: 'short' });
+      html += `
+        <div class="booking-card" style="border-left:3px solid var(--amber-dark)">
+          <div class="booking-header">
+            <div>
+              <div class="booking-title">💶 ${p.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} — ${p.bambini?.nome || '—'}</div>
+              <div class="booking-meta">${dataFmt} · Da pagare in loco</div>
+            </div>
+            <span class="badge badge-amber">Da pagare</span>
+          </div>
+          <div class="booking-pkg">${p.pacchetto} · <strong>€${p.prezzo}</strong></div>
+        </div>`;
+    });
+  }
+
+  html += `<div style="text-align:right;font-size:14px;font-weight:700;color:var(--amber-dark);margin-bottom:16px;padding:8px 0;border-top:1px solid var(--amber-light)">Totale da pagare in loco: €${totale.toFixed(0)}</div>`;
+  list.innerHTML = html;
 }
 // ═══════════════════════════════════════════
 //  CARICA TUTTE LE PRENOTAZIONI
@@ -777,6 +817,7 @@ function adminBookingCardHTML(b) {
       <div class="divider"></div>
       <div class="admin-actions">
         ${b.stato !== 'confermata' ? `<button class="admin-confirm-btn" onclick="adminConferma('${b.id}')">✓ Conferma</button>` : ''}
+        ${b.pagamento === 'loco' && !b.pagato ? `<button class="admin-confirm-btn" onclick="adminSegnaPageto('${b.id}')">💶 Pagato</button>` : ''}
         <button class="admin-cancel-btn" onclick="adminAnnulla('${b.id}')">✕ Annulla</button>
       </div>
     </div>`;
@@ -793,6 +834,17 @@ async function adminConferma(id) {
   if (b) b.stato = 'confermata';
   adminApplyFilters();
   adminUpdateStats();
+}
+
+// ═══════════════════════════════════════════
+//  ADMIN — SEGNA COME PAGATO
+// ═══════════════════════════════════════════
+async function adminSegnaPageto(id) {
+  const { error } = await db.from('prenotazioni').update({ pagato: true }).eq('id', id);
+  if (error) { alert('Errore durante l\'aggiornamento.'); return; }
+  const b = adminAllBookings.find(x => x.id === id);
+  if (b) b.pagato = true;
+  adminApplyFilters();
 }
 
 // ═══════════════════════════════════════════
