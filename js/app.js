@@ -438,7 +438,7 @@ function renderOrari(dow) {
 
 function selectPayment(type) {
   selectedPaymentType = type;
-  ['loco', 'postepay', 'bonifico'].forEach(t => {
+  ['loco', 'bonifico'].forEach(t => {
     const opt = document.getElementById('pay-' + t);
     const radio = document.getElementById('radio-' + t);
     if (opt) opt.classList.toggle('selected', t === type);
