@@ -34,26 +34,29 @@
     </div>
     <div class="landing-body">
       <div class="landing-section-title">I nostri servizi</div>
-      <div class="landing-svc">
+      <div class="landing-svc" onclick="showInfoScreen('babyparking')" style="cursor:pointer;">
         <div class="landing-svc-icon" style="background:#E8F4FF">🧒</div>
-        <div>
+        <div style="flex:1">
           <div class="landing-svc-title">Babyparking</div>
           <div class="landing-svc-sub">Lun–Ven · 8:00–16:00 · da €15/giorno</div>
         </div>
+        <div style="color:#999;font-size:18px;">›</div>
       </div>
-      <div class="landing-svc">
+      <div class="landing-svc" onclick="showInfoScreen('compleanno')" style="cursor:pointer;">
         <div class="landing-svc-icon" style="background:#FFF0F7">🎂</div>
-        <div>
+        <div style="flex:1">
           <div class="landing-svc-title">Feste di Compleanno</div>
           <div class="landing-svc-sub">Animazione, truccabimbi · da €100</div>
         </div>
+        <div style="color:#999;font-size:18px;">›</div>
       </div>
-      <div class="landing-svc">
+      <div class="landing-svc" onclick="showInfoScreen('centroestivo')" style="cursor:pointer;">
         <div class="landing-svc-icon" style="background:#FFFBF0">☀️</div>
-        <div>
+        <div style="flex:1">
           <div class="landing-svc-title">Centro Estivo</div>
           <div class="landing-svc-sub">10 giugno – 28 settembre · Lun–Ven</div>
         </div>
+        <div style="color:#999;font-size:18px;">›</div>
       </div>
       <button class="btn-primary" style="margin-top:20px" onclick="showAuthScreen('login')">Accedi al tuo account</button>
       <button class="btn-outline" style="margin-top:8px" onclick="showAuthScreen('register')">Crea account gratuito</button>
@@ -72,6 +75,119 @@
           <span style="font-size:10px;color:#999;font-weight:600;">Facebook</span>
         </a>
       </div>
+    </div>
+  </div>
+
+  <!-- INFO BABYPARKING -->
+  <div id="screen-info-babyparking" class="auth-screen">
+    <div style="background:#000;padding:24px 20px 16px;display:flex;align-items:center;gap:12px;">
+      <button onclick="showAuthScreen('landing')" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0;">‹</button>
+      <span style="color:#fff;font-size:17px;font-weight:700;letter-spacing:1px;">Babyparking</span>
+    </div>
+    <div style="background:#fff;padding:20px 24px 32px;">
+      <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">
+        <div>📅 <strong>Lun–Ven</strong> · 8:00–16:00</div>
+        <div style="margin-top:4px;">📍 Viale Ippolito Nievo 30, Livorno</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Tariffe giornaliere</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 12:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€15</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 14:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€20</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><span style="font-size:13px;">Uscita fino alle 16:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€25</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Tariffe settimanali</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 12:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€70</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 14:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€80</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><span style="font-size:13px;">Uscita fino alle 16:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€90</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Tariffe mensili</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 12:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€180</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><span style="font-size:13px;">Uscita fino alle 16:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€200</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Pacchetti ore</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><div><div style="font-size:13px;">30 ore</div><div style="font-size:11px;color:#999;">€3.33/ora</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€100</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><div><div style="font-size:13px;">60 ore</div><div style="font-size:11px;color:#999;">€2.67/ora</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€160</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><div><div style="font-size:13px;">120 ore</div><div style="font-size:11px;color:#999;">€2.08/ora</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€250</span></div>
+      </div>
+      <div style="background:#E1F5EE;border-radius:12px;padding:14px;margin-bottom:20px;font-size:12px;color:#0F6E56;line-height:1.6;">
+        🎫 <strong>Tesseramento obbligatorio</strong> — €60 primo bambino, €40 dal secondo. Comprende assicurazione e tessera socio.
+      </div>
+      <button class="btn-primary" onclick="showAuthScreen('register')">Iscriviti ora</button>
+      <button class="btn-outline" style="margin-top:8px;" onclick="showAuthScreen('landing')">← Torna indietro</button>
+    </div>
+  </div>
+
+  <!-- INFO COMPLEANNO -->
+  <div id="screen-info-compleanno" class="auth-screen">
+    <div style="background:#000;padding:24px 20px 16px;display:flex;align-items:center;gap:12px;">
+      <button onclick="showAuthScreen('landing')" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0;">‹</button>
+      <span style="color:#fff;font-size:17px;font-weight:700;letter-spacing:1px;">Feste di Compleanno</span>
+    </div>
+    <div style="background:#fff;padding:20px 24px 32px;">
+      <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">
+        <div>📅 Feriali dalle <strong>16:00</strong> · Weekend tutto il giorno</div>
+        <div style="margin-top:4px;">📍 Viale Ippolito Nievo 30, Livorno</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Pacchetti disponibili</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Solo stanza</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€100</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eee;"><div><div style="font-size:13px;">+ 1h animazione</div><div style="font-size:11px;color:#999;">2 animatrici</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€150</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eee;"><div><div style="font-size:13px;">+ 1h animazione + truccabimbi</div><div style="font-size:11px;color:#999;">2 animatrici</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€190</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">+ Buffet</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€200</span></div>
+        <div style="padding:12px 16px;border-bottom:1px solid #eee;background:#E1F5EE;">
+          <div style="font-size:10px;font-weight:700;color:#0F6E56;margin-bottom:4px;">⭐ PIÙ SCELTO</div>
+          <div style="display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:13px;">+ 2h animazione + truccabimbi</div><div style="font-size:11px;color:#0F6E56;">3 animatrici</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€220</span></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;"><div><div style="font-size:13px;">Pacchetto completo</div><div style="font-size:11px;color:#999;">Buffet + 2h + truccabimbi + 3 animatrici</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€300</span></div>
+      </div>
+      <button class="btn-primary" onclick="showAuthScreen('register')">Prenota ora</button>
+      <button class="btn-outline" style="margin-top:8px;" onclick="showAuthScreen('landing')">← Torna indietro</button>
+    </div>
+  </div>
+
+  <!-- INFO CENTRO ESTIVO -->
+  <div id="screen-info-centroestivo" class="auth-screen">
+    <div style="background:#000;padding:24px 20px 16px;display:flex;align-items:center;gap:12px;">
+      <button onclick="showAuthScreen('landing')" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0;">‹</button>
+      <span style="color:#fff;font-size:17px;font-weight:700;letter-spacing:1px;">Centro Estivo</span>
+    </div>
+    <div style="background:#fff;padding:20px 24px 32px;">
+      <div style="font-size:13px;color:#666;line-height:1.7;margin-bottom:16px;">
+        <div>📅 Dal <strong>10 giugno</strong> al <strong>28 settembre</strong></div>
+        <div style="margin-top:4px;">📆 <strong>Lun–Ven</strong> · 7:30–16:00</div>
+        <div style="margin-top:4px;">📍 Viale Ippolito Nievo 30, Livorno</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Tariffe giornaliere</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 12:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€15</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 14:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€20</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><span style="font-size:13px;">Uscita fino alle 16:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€25</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Tariffe settimanali</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 12:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€70</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 14:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€80</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><span style="font-size:13px;">Uscita fino alle 16:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€90</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Tariffe mensili</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><span style="font-size:13px;">Uscita fino alle 12:30</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€180</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><span style="font-size:13px;">Uscita fino alle 16:00</span><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€200</span></div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Pacchetti ore</div>
+      <div style="background:#f7f7f5;border-radius:12px;overflow:hidden;margin-bottom:20px;">
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><div><div style="font-size:13px;">30 ore</div><div style="font-size:11px;color:#999;">€3.33/ora</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€100</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid #eee;"><div><div style="font-size:13px;">60 ore</div><div style="font-size:11px;color:#999;">€2.67/ora</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€160</span></div>
+        <div style="display:flex;justify-content:space-between;padding:12px 16px;"><div><div style="font-size:13px;">120 ore</div><div style="font-size:11px;color:#999;">€2.08/ora</div></div><span style="font-size:14px;font-weight:700;color:#1A3D2E;">€250</span></div>
+      </div>
+      <div style="background:#E1F5EE;border-radius:12px;padding:14px;margin-bottom:20px;font-size:12px;color:#0F6E56;line-height:1.6;">
+        🎫 <strong>Tesseramento obbligatorio</strong> — €60 primo bambino, €40 dal secondo. Comprende assicurazione e tessera socio.
+      </div>
+      <button class="btn-primary" onclick="showAuthScreen('register')">Iscriviti ora</button>
+      <button class="btn-outline" style="margin-top:8px;" onclick="showAuthScreen('landing')">← Torna indietro</button>
     </div>
   </div>
 
