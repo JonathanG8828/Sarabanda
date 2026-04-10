@@ -73,6 +73,10 @@ function showAuthScreen(name) {
   document.getElementById('screen-' + name).classList.add('active');
 }
 
+function showInfoScreen(tipo) {
+  showAuthScreen('info-' + tipo);
+}
+
 // ═══════════════════════════════════════════
 //  LOGIN
 // ═══════════════════════════════════════════
