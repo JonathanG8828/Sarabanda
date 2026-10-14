@@ -286,9 +286,29 @@ label:first-child { margin-top: 0; }
 
 /* ── LANDING PAGE ── */
 .landing-hero {
-  background: #000;
+  position: relative;
+  background: #000 url('/img/banner-web.jpg') center / cover;
   padding: 48px 24px 28px;
   text-align: center;
+  overflow: hidden;
+}
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.78);
+}
+.landing-hero > * {
+  position: relative;
+  z-index: 1;
+}
+/* Il logo ha lo sfondo nero: lo fonde col motivo invece di
+   mostrarsi come un rettangolo appiccicato sopra. */
+.landing-logo {
+  width: 230px;
+  display: block;
+  margin: 0 auto 10px;
+  mix-blend-mode: screen;
 }
 .landing-tagline {
   font-size: 14px;
