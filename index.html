@@ -756,6 +756,7 @@
       <div class="tab-row" style="margin-bottom:16px">
         <div class="tab active" id="admin-tab-prenotazioni" onclick="adminSwitchTab('prenotazioni')">Prenotazioni</div>
         <div class="tab" id="admin-tab-utenti" onclick="adminSwitchTab('utenti')">Utenti</div>
+        <div class="tab" id="admin-tab-impostazioni" onclick="adminSwitchTab('impostazioni')">⚙️ CMS</div>
       </div>
 
       <!-- LISTA PRENOTAZIONI -->
@@ -763,6 +764,120 @@
 
       <!-- LISTA UTENTI -->
       <div id="admin-users-list" style="display:none"><div class="loading-text">Caricamento...</div></div>
+
+      <!-- CMS IMPOSTAZIONI -->
+      <div id="admin-impostazioni-panel" style="display:none">
+
+        <!-- SOTTO-TAB CMS -->
+        <div style="display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:4px;">
+          <button id="cms-tab-prezzi" class="cms-tab active" onclick="cmsSwitchTab('prezzi')">💶 Prezzi</button>
+          <button id="cms-tab-testi" class="cms-tab" onclick="cmsSwitchTab('testi')">📝 Testi</button>
+          <button id="cms-tab-chiusure" class="cms-tab" onclick="cmsSwitchTab('chiusure')">🚫 Chiusure</button>
+          <button id="cms-tab-pacchetti" class="cms-tab" onclick="cmsSwitchTab('pacchetti')">📦 Pacchetti</button>
+        </div>
+
+        <!-- PREZZI -->
+        <div id="cms-prezzi" class="cms-section">
+          <div class="cms-card">
+            <div class="cms-card-title">🧒 Babyparking — Tariffe giornaliere</div>
+            <div class="cms-row"><label>Fino 12:30</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-g-1230" class="cms-input" placeholder="15" /></div></div>
+            <div class="cms-row"><label>Fino 14:30</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-g-1430" class="cms-input" placeholder="20" /></div></div>
+            <div class="cms-row"><label>Fino 16:00</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-g-1600" class="cms-input" placeholder="25" /></div></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">🧒 Babyparking — Tariffe settimanali</div>
+            <div class="cms-row"><label>Fino 12:30</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-s-1230" class="cms-input" placeholder="70" /></div></div>
+            <div class="cms-row"><label>Fino 14:00</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-s-1400" class="cms-input" placeholder="80" /></div></div>
+            <div class="cms-row"><label>Fino 16:00</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-s-1600" class="cms-input" placeholder="90" /></div></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">🧒 Babyparking — Tariffe mensili</div>
+            <div class="cms-row"><label>Fino 12:30</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-m-1230" class="cms-input" placeholder="180" /></div></div>
+            <div class="cms-row"><label>Fino 16:00</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-m-1600" class="cms-input" placeholder="200" /></div></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">🧒 Babyparking — Pacchetti ore</div>
+            <div class="cms-row"><label>30 ore</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-o-30" class="cms-input" placeholder="100" /></div></div>
+            <div class="cms-row"><label>60 ore</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-o-60" class="cms-input" placeholder="160" /></div></div>
+            <div class="cms-row"><label>120 ore</label><div class="cms-input-wrap"><span>€</span><input type="number" id="bp-o-120" class="cms-input" placeholder="250" /></div></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">🎂 Compleanni — Pacchetti</div>
+            <div class="cms-row"><label>Solo stanza</label><div class="cms-input-wrap"><span>€</span><input type="number" id="cp-stanza" class="cms-input" placeholder="100" /></div></div>
+            <div class="cms-row"><label>+ Buffet</label><div class="cms-input-wrap"><span>€</span><input type="number" id="cp-buffet" class="cms-input" placeholder="200" /></div></div>
+            <div class="cms-row"><label>+ 1h animazione</label><div class="cms-input-wrap"><span>€</span><input type="number" id="cp-1h" class="cms-input" placeholder="150" /></div></div>
+            <div class="cms-row"><label>+ 1h + truccabimbi</label><div class="cms-input-wrap"><span>€</span><input type="number" id="cp-1h-truck" class="cms-input" placeholder="190" /></div></div>
+            <div class="cms-row"><label>+ 2h + truccabimbi ⭐</label><div class="cms-input-wrap"><span>€</span><input type="number" id="cp-2h-truck" class="cms-input" placeholder="220" /></div></div>
+            <div class="cms-row"><label>Pacchetto completo</label><div class="cms-input-wrap"><span>€</span><input type="number" id="cp-completo" class="cms-input" placeholder="300" /></div></div>
+            <div class="cms-row"><label>Cauzione</label><div class="cms-input-wrap"><span>€</span><input type="number" id="cp-cauzione" class="cms-input" placeholder="50" /></div></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">🎫 Tesseramento</div>
+            <div class="cms-row"><label>1° bambino</label><div class="cms-input-wrap"><span>€</span><input type="number" id="tess-1" class="cms-input" placeholder="60" /></div></div>
+            <div class="cms-row"><label>Dal 2° in poi</label><div class="cms-input-wrap"><span>€</span><input type="number" id="tess-2" class="cms-input" placeholder="40" /></div></div>
+          </div>
+          <button class="btn-primary" onclick="cmsSalvaPrezzi()">💾 Salva prezzi</button>
+          <div id="cms-prezzi-msg" style="font-size:12px;color:#0F6E56;margin-top:8px;text-align:center;"></div>
+        </div>
+
+        <!-- TESTI -->
+        <div id="cms-testi" class="cms-section" style="display:none">
+          <div class="cms-card">
+            <div class="cms-card-title">📍 Informazioni struttura</div>
+            <div class="cms-row-col"><label>Indirizzo</label><input type="text" id="txt-indirizzo" class="cms-input" placeholder="Viale Ippolito Nievo 30, Livorno" /></div>
+            <div class="cms-row-col"><label>Telefono</label><input type="tel" id="txt-telefono" class="cms-input" placeholder="334 725 0887" /></div>
+            <div class="cms-row-col"><label>Email</label><input type="email" id="txt-email" class="cms-input" placeholder="sarabandalivorno@gmail.com" /></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">🧒 Babyparking — Orari</div>
+            <div class="cms-row-col"><label>Giorni apertura</label><input type="text" id="txt-bp-giorni" class="cms-input" placeholder="Lun–Ven" /></div>
+            <div class="cms-row-col"><label>Orario</label><input type="text" id="txt-bp-orario" class="cms-input" placeholder="8:00–16:00" /></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">🎂 Compleanni — Dettagli buffet</div>
+            <div class="cms-row-col"><label>Descrizione buffet</label><textarea id="txt-buffet" class="cms-textarea" rows="4" placeholder="7 vassoi: tramezzini, pizza..."></textarea></div>
+          </div>
+          <div class="cms-card">
+            <div class="cms-card-title">☀️ Centro Estivo — Date</div>
+            <div class="cms-row-col"><label>Data inizio</label><input type="text" id="txt-ce-inizio" class="cms-input" placeholder="10 giugno" /></div>
+            <div class="cms-row-col"><label>Data fine</label><input type="text" id="txt-ce-fine" class="cms-input" placeholder="28 settembre" /></div>
+            <div class="cms-row-col"><label>Orario</label><input type="text" id="txt-ce-orario" class="cms-input" placeholder="7:30–16:00" /></div>
+          </div>
+          <button class="btn-primary" onclick="cmsSalvaTesti()">💾 Salva testi</button>
+          <div id="cms-testi-msg" style="font-size:12px;color:#0F6E56;margin-top:8px;text-align:center;"></div>
+        </div>
+
+        <!-- CHIUSURE -->
+        <div id="cms-chiusure" class="cms-section" style="display:none">
+          <div class="cms-card">
+            <div class="cms-card-title">🚫 Aggiungi giorno di chiusura</div>
+            <div class="cms-row-col"><label>Data</label><input type="date" id="chiusura-data" class="cms-input" /></div>
+            <div class="cms-row-col"><label>Motivo (opzionale)</label><input type="text" id="chiusura-motivo" class="cms-input" placeholder="Es. Festa nazionale" /></div>
+            <button class="btn-primary" style="margin-top:8px" onclick="cmsAggiungiChiusura()">+ Aggiungi</button>
+          </div>
+          <div class="cms-card-title" style="margin-top:16px">Chiusure programmate</div>
+          <div id="cms-chiusure-list"><div class="loading-text">Nessuna chiusura programmata</div></div>
+        </div>
+
+        <!-- PACCHETTI (aggiunta/rimozione rapida) -->
+        <div id="cms-pacchetti" class="cms-section" style="display:none">
+          <div class="cms-card">
+            <div class="cms-card-title">🎂 Pacchetti compleanno attivi</div>
+            <div id="cms-pacchetti-list"></div>
+            <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px;">Aggiungi pacchetto</div>
+              <div class="cms-row-col"><label>Nome pacchetto</label><input type="text" id="pkt-nome" class="cms-input" placeholder="Es. Stanza + DJ set" /></div>
+              <div class="cms-row"><label>Prezzo</label><div class="cms-input-wrap"><span>€</span><input type="number" id="pkt-prezzo" class="cms-input" placeholder="0" /></div></div>
+              <div class="cms-row-col"><label>Dettaglio (opzionale)</label><input type="text" id="pkt-dettaglio" class="cms-input" placeholder="Es. 2 ore + DJ" /></div>
+              <div class="cms-row-col"><label><input type="checkbox" id="pkt-popular" style="margin-right:6px;" />Segna come "più scelto"</label></div>
+              <button class="btn-primary" style="margin-top:8px" onclick="cmsAggiungiPacchetto()">+ Aggiungi</button>
+            </div>
+          </div>
+          <div id="cms-pacchetti-msg" style="font-size:12px;color:#0F6E56;margin-top:8px;text-align:center;"></div>
+        </div>
+
+      </div><!-- end admin-impostazioni-panel -->
+
     </div>
   </div>
 

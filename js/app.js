@@ -738,10 +738,13 @@ function adminApplyFilters() {
 function adminSwitchTab(tab) {
   document.getElementById('admin-tab-prenotazioni').classList.toggle('active', tab === 'prenotazioni');
   document.getElementById('admin-tab-utenti').classList.toggle('active', tab === 'utenti');
+  document.getElementById('admin-tab-impostazioni').classList.toggle('active', tab === 'impostazioni');
   document.getElementById('admin-bookings-list').style.display = tab === 'prenotazioni' ? 'block' : 'none';
   document.getElementById('admin-filters').style.display = tab === 'prenotazioni' ? 'flex' : 'none';
   document.getElementById('admin-users-list').style.display = tab === 'utenti' ? 'block' : 'none';
+  document.getElementById('admin-impostazioni-panel').style.display = tab === 'impostazioni' ? 'block' : 'none';
   if (tab === 'utenti') loadAdminUsers();
+  if (tab === 'impostazioni') cmsCaricaDati();
 }
 
 // ═══════════════════════════════════════════
@@ -1033,6 +1036,160 @@ function togglePassword(inputId, btn) {
   input.type = isPassword ? 'text' : 'password';
   btn.style.color = isPassword ? 'var(--green)' : 'var(--text-tertiary)';
 }
+// ═══════════════════════════════════════════
+//  CMS — SWITCH TAB
+// ═══════════════════════════════════════════
+function cmsSwitchTab(tab) {
+  ['prezzi','testi','chiusure','pacchetti'].forEach(t => {
+    document.getElementById(`cms-tab-${t}`).classList.toggle('active', t === tab);
+    document.getElementById(`cms-${t}`).style.display = t === tab ? 'block' : 'none';
+  });
+}
+
+// ═══════════════════════════════════════════
+//  CMS — CARICA DATI DA SUPABASE
+// ═══════════════════════════════════════════
+async function cmsCaricaDati() {
+  // Carica prezzi e testi da cms_settings
+  const { data } = await db.from('cms_settings').select('*');
+  if (!data) return;
+  data.forEach(row => {
+    const el = document.getElementById(row.chiave);
+    if (el) el.value = row.valore;
+  });
+  // Carica chiusure
+  cmsCaricaChiusure();
+  // Carica pacchetti
+  cmsCaricaPacchetti();
+}
+
+// ═══════════════════════════════════════════
+//  CMS — SALVA PREZZI
+// ═══════════════════════════════════════════
+async function cmsSalvaPrezzi() {
+  const campi = [
+    'bp-g-1230','bp-g-1430','bp-g-1600',
+    'bp-s-1230','bp-s-1400','bp-s-1600',
+    'bp-m-1230','bp-m-1600',
+    'bp-o-30','bp-o-60','bp-o-120',
+    'cp-stanza','cp-buffet','cp-1h','cp-1h-truck','cp-2h-truck','cp-completo','cp-cauzione',
+    'tess-1','tess-2'
+  ];
+  const upserts = campi
+    .filter(id => document.getElementById(id) && document.getElementById(id).value !== '')
+    .map(id => ({ chiave: id, valore: document.getElementById(id).value, categoria: 'prezzi' }));
+
+  if (upserts.length === 0) return;
+  const { error } = await db.from('cms_settings').upsert(upserts, { onConflict: 'chiave' });
+  const msg = document.getElementById('cms-prezzi-msg');
+  if (error) { msg.style.color = '#c00'; msg.textContent = 'Errore nel salvataggio.'; }
+  else { msg.style.color = '#0F6E56'; msg.textContent = '✓ Prezzi salvati con successo!'; }
+  setTimeout(() => { msg.textContent = ''; }, 3000);
+}
+
+// ═══════════════════════════════════════════
+//  CMS — SALVA TESTI
+// ═══════════════════════════════════════════
+async function cmsSalvaTesti() {
+  const campi = ['txt-indirizzo','txt-telefono','txt-email','txt-bp-giorni','txt-bp-orario','txt-buffet','txt-ce-inizio','txt-ce-fine','txt-ce-orario'];
+  const upserts = campi
+    .filter(id => document.getElementById(id) && document.getElementById(id).value !== '')
+    .map(id => ({ chiave: id, valore: document.getElementById(id).value, categoria: 'testi' }));
+
+  if (upserts.length === 0) return;
+  const { error } = await db.from('cms_settings').upsert(upserts, { onConflict: 'chiave' });
+  const msg = document.getElementById('cms-testi-msg');
+  if (error) { msg.style.color = '#c00'; msg.textContent = 'Errore nel salvataggio.'; }
+  else { msg.style.color = '#0F6E56'; msg.textContent = '✓ Testi salvati con successo!'; }
+  setTimeout(() => { msg.textContent = ''; }, 3000);
+}
+
+// ═══════════════════════════════════════════
+//  CMS — CHIUSURE
+// ═══════════════════════════════════════════
+async function cmsCaricaChiusure() {
+  const el = document.getElementById('cms-chiusure-list');
+  const { data, error } = await db.from('chiusure').select('*').order('data', { ascending: true });
+  if (error || !data || data.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nessuna chiusura programmata</div>';
+    return;
+  }
+  el.innerHTML = data.map(c => `
+    <div class="cms-chiusura-item">
+      <div>
+        <div style="font-weight:600">${new Date(c.data + 'T12:00:00').toLocaleDateString('it-IT', {weekday:'short',day:'numeric',month:'long',year:'numeric'})}</div>
+        ${c.motivo ? `<div style="font-size:11px;color:var(--text-secondary)">${c.motivo}</div>` : ''}
+      </div>
+      <button onclick="cmsRimuoviChiusura(${c.id})" style="background:none;border:none;cursor:pointer;color:#c00;font-size:18px;padding:4px;">🗑</button>
+    </div>
+  `).join('');
+}
+
+async function cmsAggiungiChiusura() {
+  const data = document.getElementById('chiusura-data').value;
+  const motivo = document.getElementById('chiusura-motivo').value;
+  if (!data) { alert('Seleziona una data'); return; }
+  const { error } = await db.from('chiusure').insert({ data, motivo: motivo || null });
+  if (error) { alert('Errore: ' + error.message); return; }
+  document.getElementById('chiusura-data').value = '';
+  document.getElementById('chiusura-motivo').value = '';
+  cmsCaricaChiusure();
+}
+
+async function cmsRimuoviChiusura(id) {
+  if (!confirm('Rimuovere questa chiusura?')) return;
+  await db.from('chiusure').delete().eq('id', id);
+  cmsCaricaChiusure();
+}
+
+// ═══════════════════════════════════════════
+//  CMS — PACCHETTI COMPLEANNO
+// ═══════════════════════════════════════════
+async function cmsCaricaPacchetti() {
+  const el = document.getElementById('cms-pacchetti-list');
+  const { data, error } = await db.from('pacchetti_compleanno').select('*').order('prezzo', { ascending: true });
+  if (error || !data || data.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nessun pacchetto. Aggiungili sotto.</div>';
+    return;
+  }
+  el.innerHTML = data.map(p => `
+    <div class="cms-pacchetto-item">
+      <div>
+        <div style="font-size:13px;font-weight:600">${p.popolare ? '⭐ ' : ''}${p.nome}</div>
+        ${p.dettaglio ? `<div style="font-size:11px;color:var(--text-secondary)">${p.dettaglio}</div>` : ''}
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-weight:700;color:var(--green)">€${p.prezzo}</span>
+        <button onclick="cmsRimuoviPacchetto(${p.id})" style="background:none;border:none;cursor:pointer;color:#c00;font-size:18px;padding:4px;">🗑</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function cmsAggiungiPacchetto() {
+  const nome = document.getElementById('pkt-nome').value.trim();
+  const prezzo = parseFloat(document.getElementById('pkt-prezzo').value);
+  const dettaglio = document.getElementById('pkt-dettaglio').value.trim();
+  const popolare = document.getElementById('pkt-popular').checked;
+  if (!nome || !prezzo) { alert('Inserisci nome e prezzo'); return; }
+  const { error } = await db.from('pacchetti_compleanno').insert({ nome, prezzo, dettaglio: dettaglio || null, popolare });
+  if (error) { alert('Errore: ' + error.message); return; }
+  document.getElementById('pkt-nome').value = '';
+  document.getElementById('pkt-prezzo').value = '';
+  document.getElementById('pkt-dettaglio').value = '';
+  document.getElementById('pkt-popular').checked = false;
+  const msg = document.getElementById('cms-pacchetti-msg');
+  msg.textContent = '✓ Pacchetto aggiunto!';
+  setTimeout(() => { msg.textContent = ''; }, 2000);
+  cmsCaricaPacchetti();
+}
+
+async function cmsRimuoviPacchetto(id) {
+  if (!confirm('Rimuovere questo pacchetto?')) return;
+  await db.from('pacchetti_compleanno').delete().eq('id', id);
+  cmsCaricaPacchetti();
+}
+
 // ═══════════════════════════════════════════
 //  UTILITY
 // ═══════════════════════════════════════════
