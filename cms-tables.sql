@@ -65,11 +65,11 @@ create policy "Chiunque legge pacchetti" on public.pacchetti_compleanno for sele
 -- ── 4. Dati iniziali: i pacchetti attuali ──
 insert into public.pacchetti_compleanno (nome, prezzo, dettaglio, popolare)
 select * from (values
-  ('Solo stanza',            150, 'Affitto sala, 2 ore',                    false),
-  ('Stanza + buffet',        250, 'Sala + buffet per bambini e adulti',     false),
-  ('Animazione 1 ora',       180, 'Sala + 1h di animazione',                false),
-  ('Animazione 1h + truck',  220, 'Sala + 1h animazione + food truck',      false),
-  ('Animazione 2h + truck',  280, 'Sala + 2h animazione + food truck',      true),
-  ('Pacchetto completo',     350, 'Tutto incluso: sala, buffet, animazione', false)
+  ('Solo stanza',                           100, 'Affitto sala',                                        false),
+  ('Stanza + 1h animazione',                150, '2 animatrici',                                        false),
+  ('Stanza + 1h animazione + truccabimbi',  190, '2 animatrici',                                        false),
+  ('Stanza + buffet',                       200, 'Buffet per bambini e adulti',                         false),
+  ('Stanza + 2h animazione + truccabimbi',  220, '3 animatrici',                                        true),
+  ('Pacchetto completo',                    300, 'Buffet + 2h animazione + truccabimbi + 3 animatrici', false)
 ) as v(nome, prezzo, dettaglio, popolare)
 where not exists (select 1 from public.pacchetti_compleanno);

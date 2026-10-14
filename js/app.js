@@ -27,9 +27,116 @@ let tesseraPagamento = 'loco'; // 'loco' o 'online'
 let bambinoCount = 1;
 
 // ═══════════════════════════════════════════
+//  PREZZI DAL CMS
+// ═══════════════════════════════════════════
+// Valori di fallback: usati se Supabase non risponde o se Sara
+// non ha ancora salvato quella voce. Le chiavi corrispondono agli
+// id degli input nel CMS e all'attributo data-cms nell'HTML.
+const PREZZI_DEFAULT = {
+  'bp-g-1230': 15, 'bp-g-1430': 20, 'bp-g-1600': 25,
+  'bp-s-1230': 70, 'bp-s-1400': 80, 'bp-s-1600': 90,
+  'bp-m-1230': 180, 'bp-m-1600': 200,
+  'bp-o-30': 100, 'bp-o-60': 160, 'bp-o-120': 250,
+  'cp-cauzione': 50, 'tess-1': 60, 'tess-2': 40
+};
+let PREZZI = { ...PREZZI_DEFAULT };
+
+async function caricaPrezzi() {
+  try {
+    const { data } = await db.from('cms_settings').select('chiave,valore');
+    if (data) data.forEach(r => {
+      if (r.valore !== '' && r.valore != null && !isNaN(Number(r.valore))) {
+        PREZZI[r.chiave] = Number(r.valore);
+      }
+    });
+  } catch (e) {
+    console.warn('Prezzi CMS non caricati, uso i valori di default', e);
+  }
+  applicaPrezzi();
+}
+
+function applicaPrezzi() {
+  document.querySelectorAll('[data-cms]').forEach(el => {
+    const v = PREZZI[el.dataset.cms];
+    if (v == null) return;
+    el.textContent = (el.dataset.cmsRaw === '1' ? '' : '€') + v;
+  });
+  document.querySelectorAll('[data-cms-ora]').forEach(el => {
+    const v = PREZZI[el.dataset.cmsOra];
+    const ore = Number(el.dataset.ore);
+    if (v != null && ore) el.textContent = '€' + (v / ore).toFixed(2) + '/ora';
+  });
+}
+
+// Pacchetti compleanno: tabella relazionale, Sara può aggiungere/
+// rinominare/riordinare dal CMS → scheda Pacchetti.
+let pacchettiCompleanno = [];
+
+async function renderPacchetti() {
+  const box = document.getElementById('pacchetti-list');
+  const info = document.getElementById('info-pacchetti-list');
+  try {
+    const { data } = await db
+      .from('pacchetti_compleanno')
+      .select('*')
+      .eq('attivo', true)
+      .order('prezzo', { ascending: true });
+    pacchettiCompleanno = data || [];
+  } catch (e) {
+    console.warn('Pacchetti compleanno non caricati', e);
+    return;
+  }
+  if (!pacchettiCompleanno.length) return;
+
+  if (box) {
+    box.innerHTML = pacchettiCompleanno.map(p => `
+      <div class="tariff-row${p.popolare ? ' popular' : ''}"
+           onclick="selectTariffPacchetto(this, ${p.id})">
+        <div>
+          ${p.popolare ? '<div class="popular-badge">Più scelto</div>' : ''}
+          <div class="tariff-name">${escapeHtml(p.nome)}</div>
+          ${p.dettaglio ? `<div class="tariff-detail">${escapeHtml(p.dettaglio)}</div>` : ''}
+        </div>
+        <div class="tariff-price">€${p.prezzo}</div>
+      </div>`).join('');
+  }
+
+  if (info) {
+    info.innerHTML = pacchettiCompleanno.map(p => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-bottom:1px solid #eee;${p.popolare ? 'background:#E1F5EE;' : ''}">
+        <div>
+          ${p.popolare ? '<div style="font-size:10px;font-weight:700;color:#0F6E56;margin-bottom:4px;">⭐ PIÙ SCELTO</div>' : ''}
+          <div style="font-size:13px;">${escapeHtml(p.nome)}</div>
+          ${p.dettaglio ? `<div style="font-size:11px;color:${p.popolare ? '#0F6E56' : '#999'};">${escapeHtml(p.dettaglio)}</div>` : ''}
+        </div>
+        <span style="font-size:14px;font-weight:700;color:#1A3D2E;white-space:nowrap;">€${p.prezzo}</span>
+      </div>`).join('');
+  }
+
+  const min = Math.min(...pacchettiCompleanno.map(p => Number(p.prezzo)));
+  const minEl = document.getElementById('cp-min-prezzo');
+  if (minEl && isFinite(min)) minEl.textContent = min;
+}
+
+function selectTariffPacchetto(el, id) {
+  const p = pacchettiCompleanno.find(x => x.id === id);
+  if (!p) return;
+  selectTariff(el, p.nome, Number(p.prezzo));
+}
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// ═══════════════════════════════════════════
 //  INIZIALIZZAZIONE
 // ═══════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', async () => {
+  caricaPrezzi();
+  renderPacchetti();
+
   const { data: { session } } = await db.auth.getSession();
   if (session) {
     currentUser = session.user;
@@ -259,7 +366,10 @@ function selectTariff(el, name, price) {
   if (container) container.querySelectorAll('.tariff-row').forEach(r => r.classList.remove('selected'));
   el.classList.add('selected');
   selectedTariffName = name;
-  selectedTariffPrice = price;
+  // Se la riga è collegata al CMS, vince il prezzo del CMS;
+  // altrimenti resta il valore nell'onclick come fallback.
+  const k = el.dataset.cmsPrezzo;
+  selectedTariffPrice = (k && PREZZI[k] != null) ? Number(PREZZI[k]) : Number(price);
 }
 
 function switchBpTab(el, tabId) {
@@ -285,6 +395,7 @@ let calYear = 0;
 let calMonth = 0;
 let calTipoServizio = '';
 let calDateOccupate = [];
+let calChiusure = [];
 const MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
 async function goToConferma(tipo) {
@@ -329,6 +440,14 @@ async function goToConferma(tipo) {
 }
 
 async function caricaDateOccupate(tipo) {
+  // Chiusure straordinarie: valgono per tutti i servizi
+  try {
+    const { data: ch } = await db.from('chiusure').select('data');
+    calChiusure = (ch || []).map(c => c.data);
+  } catch (e) {
+    calChiusure = [];
+  }
+
   if (tipo === 'centro_estivo') {
     calDateOccupate = [];
     return;
@@ -385,6 +504,8 @@ function renderCalendario() {
 
     if (isPast) {
       stato = 'past';
+    } else if (calChiusure.includes(dataStr)) {
+      stato = 'closed';
     } else if (calTipoServizio === 'babyparking') {
       if (dow === 0 || dow === 6) stato = 'closed';
     } else {
@@ -1072,7 +1193,7 @@ async function cmsSalvaPrezzi() {
     'bp-s-1230','bp-s-1400','bp-s-1600',
     'bp-m-1230','bp-m-1600',
     'bp-o-30','bp-o-60','bp-o-120',
-    'cp-stanza','cp-buffet','cp-1h','cp-1h-truck','cp-2h-truck','cp-completo','cp-cauzione',
+    'cp-cauzione',
     'tess-1','tess-2'
   ];
   const upserts = campi
@@ -1083,7 +1204,12 @@ async function cmsSalvaPrezzi() {
   const { error } = await db.from('cms_settings').upsert(upserts, { onConflict: 'chiave' });
   const msg = document.getElementById('cms-prezzi-msg');
   if (error) { msg.style.color = '#c00'; msg.textContent = 'Errore nel salvataggio.'; }
-  else { msg.style.color = '#0F6E56'; msg.textContent = '✓ Prezzi salvati con successo!'; }
+  else {
+    msg.style.color = '#0F6E56';
+    msg.textContent = '✓ Prezzi salvati con successo!';
+    // aggiorna subito le schermate pubbliche senza ricaricare la pagina
+    caricaPrezzi();
+  }
   setTimeout(() => { msg.textContent = ''; }, 3000);
 }
 
@@ -1182,12 +1308,14 @@ async function cmsAggiungiPacchetto() {
   msg.textContent = '✓ Pacchetto aggiunto!';
   setTimeout(() => { msg.textContent = ''; }, 2000);
   cmsCaricaPacchetti();
+  renderPacchetti();
 }
 
 async function cmsRimuoviPacchetto(id) {
   if (!confirm('Rimuovere questo pacchetto?')) return;
   await db.from('pacchetti_compleanno').delete().eq('id', id);
   cmsCaricaPacchetti();
+  renderPacchetti();
 }
 
 // ═══════════════════════════════════════════
