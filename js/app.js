@@ -136,6 +136,7 @@ function escapeHtml(s) {
 document.addEventListener('DOMContentLoaded', async () => {
   caricaPrezzi();
   renderPacchetti();
+  caricaFaq();
 
   const { data: { session } } = await db.auth.getSession();
   if (session) {
@@ -1173,7 +1174,7 @@ function togglePassword(inputId, btn) {
 //  CMS — SWITCH TAB
 // ═══════════════════════════════════════════
 function cmsSwitchTab(tab) {
-  ['prezzi','testi','chiusure','pacchetti'].forEach(t => {
+  ['prezzi','testi','chiusure','pacchetti','faq'].forEach(t => {
     document.getElementById(`cms-tab-${t}`).classList.toggle('active', t === tab);
     document.getElementById(`cms-${t}`).style.display = t === tab ? 'block' : 'none';
   });
@@ -1185,8 +1186,7 @@ function cmsSwitchTab(tab) {
 async function cmsCaricaDati() {
   // Carica prezzi e testi da cms_settings
   const { data } = await db.from('cms_settings').select('*');
-  if (!data) return;
-  data.forEach(row => {
+  if (data) data.forEach(row => {
     const el = document.getElementById(row.chiave);
     if (el) el.value = row.valore;
   });
@@ -1194,6 +1194,8 @@ async function cmsCaricaDati() {
   cmsCaricaChiusure();
   // Carica pacchetti
   cmsCaricaPacchetti();
+  // Carica FAQ
+  cmsCaricaFaq();
 }
 
 // ═══════════════════════════════════════════
@@ -1328,6 +1330,89 @@ async function cmsRimuoviPacchetto(id) {
   await db.from('pacchetti_compleanno').delete().eq('id', id);
   cmsCaricaPacchetti();
   renderPacchetti();
+}
+
+// ═══════════════════════════════════════════
+//  FAQ — VISTA PUBBLICA
+// ═══════════════════════════════════════════
+async function caricaFaq() {
+  const el = document.getElementById('faq-list');
+  if (!el) return;
+  const { data, error } = await db.from('faq').select('*').eq('attivo', true).order('ordine', { ascending: true });
+  if (error || !data || data.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nessuna domanda al momento. Scrivici su WhatsApp!</div>';
+    return;
+  }
+  el.innerHTML = data.map(f => `
+    <div class="faq-item" id="faq-item-${f.id}">
+      <button class="faq-q" onclick="faqToggle(${f.id})">
+        <span>${escapeHtml(f.domanda)}</span>
+        <span class="faq-chevron">⌄</span>
+      </button>
+      <div class="faq-a" id="faq-a-${f.id}">${escapeHtml(f.risposta)}</div>
+    </div>
+  `).join('');
+}
+
+function faqToggle(id) {
+  const item = document.getElementById('faq-item-' + id);
+  if (!item) return;
+  item.classList.toggle('open');
+}
+
+// ═══════════════════════════════════════════
+//  CMS — FAQ
+// ═══════════════════════════════════════════
+async function cmsCaricaFaq() {
+  const el = document.getElementById('cms-faq-list');
+  if (!el) return;
+  const { data, error } = await db.from('faq').select('*').order('ordine', { ascending: true });
+  if (error || !data || data.length === 0) {
+    el.innerHTML = '<div class="empty-state">Nessuna domanda inserita</div>';
+    return;
+  }
+  el.innerHTML = data.map(f => `
+    <div class="cms-faq-item">
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:600;font-size:13px;">${escapeHtml(f.domanda)}</div>
+        <div style="font-size:11px;color:var(--text-secondary);margin-top:2px;">${escapeHtml(f.risposta)}</div>
+      </div>
+      <button onclick="cmsRimuoviFaq(${f.id})" style="background:none;border:none;cursor:pointer;color:#c00;font-size:18px;padding:4px;">🗑</button>
+    </div>
+  `).join('');
+}
+
+async function cmsAggiungiFaq() {
+  const domanda = document.getElementById('faq-domanda').value.trim();
+  const risposta = document.getElementById('faq-risposta').value.trim();
+  const msg = document.getElementById('cms-faq-msg');
+  if (!domanda || !risposta) { alert('Scrivi sia la domanda che la risposta'); return; }
+
+  // La nuova domanda va in fondo all'elenco
+  const { data: ultime } = await db.from('faq').select('ordine').order('ordine', { ascending: false }).limit(1);
+  const ordine = (ultime && ultime.length ? Number(ultime[0].ordine) : 0) + 1;
+
+  const { error } = await db.from('faq').insert({ domanda, risposta, ordine });
+  if (error) {
+    msg.style.color = '#c00';
+    msg.textContent = 'Errore: ' + error.message;
+    setTimeout(() => { msg.textContent = ''; }, 4000);
+    return;
+  }
+  document.getElementById('faq-domanda').value = '';
+  document.getElementById('faq-risposta').value = '';
+  msg.style.color = '#0F6E56';
+  msg.textContent = '✓ Domanda aggiunta!';
+  setTimeout(() => { msg.textContent = ''; }, 2000);
+  cmsCaricaFaq();
+  caricaFaq();
+}
+
+async function cmsRimuoviFaq(id) {
+  if (!confirm('Rimuovere questa domanda?')) return;
+  await db.from('faq').delete().eq('id', id);
+  cmsCaricaFaq();
+  caricaFaq();
 }
 
 // ═══════════════════════════════════════════
