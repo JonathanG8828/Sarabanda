@@ -857,13 +857,25 @@ function adminApplyFilters() {
 //  ADMIN — TAB SWITCH
 // ═══════════════════════════════════════════
 function adminSwitchTab(tab) {
-  document.getElementById('admin-tab-prenotazioni').classList.toggle('active', tab === 'prenotazioni');
-  document.getElementById('admin-tab-utenti').classList.toggle('active', tab === 'utenti');
-  document.getElementById('admin-tab-impostazioni').classList.toggle('active', tab === 'impostazioni');
-  document.getElementById('admin-bookings-list').style.display = tab === 'prenotazioni' ? 'block' : 'none';
-  document.getElementById('admin-filters').style.display = tab === 'prenotazioni' ? 'flex' : 'none';
-  document.getElementById('admin-users-list').style.display = tab === 'utenti' ? 'block' : 'none';
-  document.getElementById('admin-impostazioni-panel').style.display = tab === 'impostazioni' ? 'block' : 'none';
+  // Helper tolleranti: se un elemento manca si salta, senza bloccare
+  // il resto della funzione (altrimenti il pannello non si apre).
+  const attiva = (id, on) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('active', on);
+  };
+  const mostra = (id, on, display) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = on ? (display || 'block') : 'none';
+  };
+
+  attiva('admin-tab-prenotazioni', tab === 'prenotazioni');
+  attiva('admin-tab-utenti', tab === 'utenti');
+  attiva('admin-tab-impostazioni', tab === 'impostazioni');
+  mostra('admin-bookings-list', tab === 'prenotazioni');
+  mostra('admin-filters', tab === 'prenotazioni', 'flex');
+  mostra('admin-users-list', tab === 'utenti');
+  mostra('admin-impostazioni-panel', tab === 'impostazioni');
+
   if (tab === 'utenti') loadAdminUsers();
   if (tab === 'impostazioni') cmsCaricaDati();
 }
