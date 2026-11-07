@@ -592,7 +592,9 @@ async function salvaPrenotazione() {
   const tipoServizio = calTipoServizio === 'compleanno' ? 'compleanno' : 'babyparking';
   const pacchettoConOrario = orario ? `${selectedTariffName} — ore ${orario}` : selectedTariffName;
 
-  const { error } = await db.from('prenotazioni').insert({
+  const stato = selectedPaymentType === 'loco' ? 'confermata' : 'in_attesa';
+
+  const { data: nuova, error } = await db.from('prenotazioni').insert({
     profilo_id: currentUser.id,
     bambino_id: bambinoId,
     tipo_servizio: tipoServizio,
@@ -600,8 +602,8 @@ async function salvaPrenotazione() {
     prezzo: selectedTariffPrice,
     data_prenotazione: data,
     pagamento: selectedPaymentType,
-    stato: selectedPaymentType === 'loco' ? 'confermata' : 'in_attesa'
-  });
+    stato
+  }).select('id').single();
 
   if (error) {
     showError(errEl, 'Errore nel salvataggio. Riprova.');
@@ -609,6 +611,20 @@ async function salvaPrenotazione() {
   }
 
   const bambino = currentBambini.find(b => b.id === bambinoId);
+
+  // Scrive l'evento nel Google Calendar di Sarabanda.
+  await syncCalendario('crea', {
+    id: nuova.id,
+    tipo_servizio: tipoServizio,
+    pacchetto: pacchettoConOrario,
+    prezzo: selectedTariffPrice,
+    data_prenotazione: data,
+    pagamento: selectedPaymentType,
+    stato,
+    nome_bambino: bambino?.nome || '—',
+    nome_genitore: `${currentProfile.nome} ${currentProfile.cognome}`,
+    telefono: currentProfile.telefono
+  });
 
   await sendEmail('prenotazione', {
     email: currentProfile.email,
@@ -639,6 +655,23 @@ async function sendEmail(type, data) {
     });
   } catch (err) {
     console.error('Errore invio email:', err);
+  }
+}
+
+// ═══════════════════════════════════════════
+//  SINCRONIZZA GOOGLE CALENDAR
+//  Se fallisce, la prenotazione resta valida:
+//  il calendario non deve mai bloccare l'app.
+// ═══════════════════════════════════════════
+async function syncCalendario(azione, data) {
+  try {
+    await fetch('/api/calendario', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ azione, data })
+    });
+  } catch (err) {
+    console.error('Errore sincronizzazione calendario:', err);
   }
 }
 
@@ -793,6 +826,8 @@ async function cancellaPrenotazione(id) {
 
   const { error } = await db.from('prenotazioni').update({ stato: 'annullata' }).eq('id', id);
   if (error) { alert('Errore durante la cancellazione.'); return; }
+
+  await syncCalendario('annulla', { id });
 
   const el = document.getElementById('booking-' + id);
   if (el) el.remove();
@@ -1015,6 +1050,9 @@ async function adminAnnulla(id) {
   if (!confirm('Vuoi annullare questa prenotazione?')) return;
   const { error } = await db.from('prenotazioni').update({ stato: 'annullata' }).eq('id', id);
   if (error) { alert('Errore durante l\'annullamento.'); return; }
+
+  await syncCalendario('annulla', { id });
+
   // Rimuovi dalla cache e ricarica
   adminAllBookings = adminAllBookings.filter(x => x.id !== id);
   adminApplyFilters();
