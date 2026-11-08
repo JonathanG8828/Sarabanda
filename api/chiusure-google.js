@@ -92,7 +92,7 @@ export default async function handler(req, res) {
     const body = await r.json();
     const chiusure = new Set();
     const motivi = {};
-    const diag = { ricevuti: (body.items || []).length, scartatiApp: 0, scartatiLiberi: 0, calendario: body.summary || null };
+    const diag = { ricevuti: (body.items || []).length, scartatiApp: 0, calendario: body.summary || null };
 
     for (const evento of body.items || []) {
       if (evento.status === 'cancelled') continue;
@@ -103,9 +103,10 @@ export default async function handler(req, res) {
       // come i nostri, e filtrarli nascondeva gli eventi scritti
       // a mano da Sara.
       if (evento.extendedProperties?.private?.origine === 'app-sarabanda') { diag.scartatiApp++; continue; }
-      // "Libero" in Google significa che l'impegno non occupa:
-      // chi lo segna cosi' non intende bloccare le prenotazioni.
-      if (evento.transparency === 'transparent') { diag.scartatiLiberi++; continue; }
+      // Nessun filtro su "Libero"/"Occupato": Google marca da solo
+      // come "Libero" gli eventi di un giorno intero, che sono
+      // proprio il modo naturale di bloccare una giornata. Su un
+      // calendario dedicato, qualsiasi evento vale come blocco.
 
       for (const giorno of giorniCoperti(evento)) {
         chiusure.add(giorno);
