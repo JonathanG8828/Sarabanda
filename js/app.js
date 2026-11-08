@@ -397,6 +397,7 @@ let calMonth = 0;
 let calTipoServizio = '';
 let calDateOccupate = [];
 let calChiusure = [];
+let calChiusureMotivi = {};
 const MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
 async function goToConferma(tipo) {
@@ -441,12 +442,31 @@ async function goToConferma(tipo) {
 }
 
 async function caricaDateOccupate(tipo) {
-  // Chiusure straordinarie: valgono per tutti i servizi
+  // Chiusure straordinarie: valgono per tutti i servizi.
+  // Due fonti: il CMS (chiusure programmate) e il calendario
+  // Google dei blocchi (imprevisti che Sara segna dal telefono).
+  calChiusure = [];
+  calChiusureMotivi = {};
+
   try {
-    const { data: ch } = await db.from('chiusure').select('data');
-    calChiusure = (ch || []).map(c => c.data);
+    const { data: ch } = await db.from('chiusure').select('data,motivo');
+    (ch || []).forEach(c => {
+      calChiusure.push(c.data);
+      if (c.motivo) calChiusureMotivi[c.data] = c.motivo;
+    });
   } catch (e) {
-    calChiusure = [];
+    console.warn('Chiusure CMS non caricate', e);
+  }
+
+  try {
+    const r = await fetch('/api/chiusure-google');
+    const g = await r.json();
+    (g.chiusure || []).forEach(d => {
+      if (!calChiusure.includes(d)) calChiusure.push(d);
+      if (!calChiusureMotivi[d] && g.motivi?.[d]) calChiusureMotivi[d] = g.motivi[d];
+    });
+  } catch (e) {
+    console.warn('Chiusure Google non caricate', e);
   }
 
   if (tipo === 'centro_estivo') {
@@ -518,7 +538,10 @@ function renderCalendario() {
     div.className = 'cal-cell';
 
     if (stato === 'past') div.classList.add('cal-past');
-    else if (stato === 'closed') div.classList.add('cal-closed');
+    else if (stato === 'closed') {
+      div.classList.add('cal-closed');
+      if (calChiusureMotivi[dataStr]) div.title = calChiusureMotivi[dataStr];
+    }
     else if (stato === 'busy') div.classList.add('cal-busy');
     else {
       div.classList.add('cal-available');
