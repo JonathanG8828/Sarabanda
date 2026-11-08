@@ -85,6 +85,15 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'Dati prenotazione mancanti' });
   }
 
+  // Solo i compleanni vanno a calendario: occupano la sala e ce
+  // n'e' al massimo uno al giorno. Il babyparking accoglie tanti
+  // bambini nello stesso giorno, riempirebbe il calendario di
+  // eventi sovrapposti senza aggiungere nulla di utile: quelle
+  // iscrizioni si leggono nel pannello admin.
+  if (azione !== 'annulla' && data.tipo_servizio !== 'compleanno') {
+    return res.status(200).json({ ok: true, skipped: 'Solo i compleanni vanno a calendario' });
+  }
+
   try {
     const token = await getAccessToken();
     const base = calendarUrl(calendarId);
