@@ -244,16 +244,20 @@ label:first-child { margin-top: 0; }
 .cal-available:hover { background: var(--green-light); color: var(--green); }
 .cal-selected { background: var(--green) !important; color: #fff !important; }
 .cal-today { border: 1.5px solid var(--green); color: var(--green); font-weight: 600; }
-.cal-busy { background: #FCEBEB; color: #A32D2D; cursor: not-allowed; text-decoration: line-through; }
-.cal-closed { color: var(--text-tertiary); cursor: not-allowed; opacity: 0.4; }
+/* Occupato e chiuso hanno lo stesso aspetto: al cliente basta
+   sapere che non puo' prenotare, il motivo non lo riguarda. */
+.cal-busy,
+.cal-closed { background: #FCEBEB; color: #A32D2D; cursor: not-allowed; text-decoration: line-through; opacity: 1; }
 .cal-past { color: var(--text-tertiary); cursor: not-allowed; opacity: 0.3; }
 .cal-empty { cursor: default; }
 .cal-legend { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
 .legend-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--text-secondary); }
 .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
-.dot-available { background: var(--green); }
+/* Il pallino "disponibile" e' bianco col bordo: sul telefono i
+   giorni liberi appaiono bianchi, perche' il verde e' solo
+   l'effetto al passaggio del mouse e sul touch non esiste. */
+.dot-available { background: var(--bg-primary); border: 1px solid var(--border); }
 .dot-busy { background: #A32D2D; }
-.dot-closed { background: var(--border); }
 
 /* ── ORARI ── */
 .slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 8px; }
