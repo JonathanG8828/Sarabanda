@@ -398,6 +398,7 @@ let calTipoServizio = '';
 let calDateOccupate = [];
 let calChiusure = [];
 let calChiusureMotivi = {};
+let calOccupatiGoogle = [];
 const MESI = ['Gennaio','Febbraio','Marzo','Aprile','Maggio','Giugno','Luglio','Agosto','Settembre','Ottobre','Novembre','Dicembre'];
 
 async function goToConferma(tipo) {
@@ -458,15 +459,18 @@ async function caricaDateOccupate(tipo) {
     console.warn('Chiusure CMS non caricate', e);
   }
 
+  // Il calendario Google segna giorni OCCUPATI, non chiusi:
+  // di solito e' una festa presa a voce, non una chiusura.
+  calOccupatiGoogle = [];
   try {
     const r = await fetch('/api/chiusure-google');
     const g = await r.json();
     (g.chiusure || []).forEach(d => {
-      if (!calChiusure.includes(d)) calChiusure.push(d);
-      if (!calChiusureMotivi[d] && g.motivi?.[d]) calChiusureMotivi[d] = g.motivi[d];
+      if (!calOccupatiGoogle.includes(d)) calOccupatiGoogle.push(d);
+      if (g.motivi?.[d]) calChiusureMotivi[d] = g.motivi[d];
     });
   } catch (e) {
-    console.warn('Chiusure Google non caricate', e);
+    console.warn('Giorni occupati da Google non caricati', e);
   }
 
   if (tipo === 'centro_estivo') {
@@ -527,6 +531,8 @@ function renderCalendario() {
       stato = 'past';
     } else if (calChiusure.includes(dataStr)) {
       stato = 'closed';
+    } else if (calOccupatiGoogle.includes(dataStr)) {
+      stato = 'busy';
     } else if (calTipoServizio === 'babyparking') {
       if (dow === 0 || dow === 6) stato = 'closed';
     } else {
@@ -542,7 +548,10 @@ function renderCalendario() {
       div.classList.add('cal-closed');
       if (calChiusureMotivi[dataStr]) div.title = calChiusureMotivi[dataStr];
     }
-    else if (stato === 'busy') div.classList.add('cal-busy');
+    else if (stato === 'busy') {
+      div.classList.add('cal-busy');
+      if (calChiusureMotivi[dataStr]) div.title = calChiusureMotivi[dataStr];
+    }
     else {
       div.classList.add('cal-available');
       if (isToday) div.classList.add('cal-today');
