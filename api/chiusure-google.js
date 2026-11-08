@@ -97,8 +97,11 @@ export default async function handler(req, res) {
       if (evento.status === 'cancelled') continue;
       // Eventi creati dall'app: sono le prenotazioni, non blocchi.
       // Rileggerli chiuderebbe la giornata a chi prenota dopo.
+      // Nota: niente scorciatoie sulla forma dell'id. L'app
+      // Google del telefono genera id a 32 cifre esadecimali
+      // come i nostri, e filtrarli nascondeva gli eventi scritti
+      // a mano da Sara.
       if (evento.extendedProperties?.private?.origine === 'app-sarabanda') continue;
-      if (/^[0-9a-f]{32}$/.test(evento.id || '')) continue;
       // "Libero" in Google significa che l'impegno non occupa:
       // chi lo segna cosi' non intende bloccare le prenotazioni.
       if (evento.transparency === 'transparent') continue;
