@@ -58,7 +58,7 @@ export default async function handler(req, res) {
 
   // Non configurato: nessuna chiusura, l'app funziona come prima.
   if (!calendarId || !process.env.GOOGLE_SA_EMAIL) {
-    return res.status(200).json({ chiusure: [], motivi: {} });
+    return res.status(200).json({ chiusure: [], motivi: {}, diagnostica: { configurato: false } });
   }
 
   try {
@@ -92,6 +92,7 @@ export default async function handler(req, res) {
     const body = await r.json();
     const chiusure = new Set();
     const motivi = {};
+    const diag = { ricevuti: (body.items || []).length, scartatiApp: 0, scartatiLiberi: 0, calendario: body.summary || null };
 
     for (const evento of body.items || []) {
       if (evento.status === 'cancelled') continue;
@@ -101,10 +102,10 @@ export default async function handler(req, res) {
       // Google del telefono genera id a 32 cifre esadecimali
       // come i nostri, e filtrarli nascondeva gli eventi scritti
       // a mano da Sara.
-      if (evento.extendedProperties?.private?.origine === 'app-sarabanda') continue;
+      if (evento.extendedProperties?.private?.origine === 'app-sarabanda') { diag.scartatiApp++; continue; }
       // "Libero" in Google significa che l'impegno non occupa:
       // chi lo segna cosi' non intende bloccare le prenotazioni.
-      if (evento.transparency === 'transparent') continue;
+      if (evento.transparency === 'transparent') { diag.scartatiLiberi++; continue; }
 
       for (const giorno of giorniCoperti(evento)) {
         chiusure.add(giorno);
@@ -115,7 +116,7 @@ export default async function handler(req, res) {
     // Cache breve: Sara blocca un giorno e lo vede subito,
     // ma non interroghiamo Google a ogni apertura del calendario.
     res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=120');
-    return res.status(200).json({ chiusure: [...chiusure].sort(), motivi });
+    return res.status(200).json({ chiusure: [...chiusure].sort(), motivi, diagnostica: diag });
   } catch (err) {
     console.error('Chiusure Google error:', err.message);
     return res.status(200).json({ chiusure: [], motivi: {}, errore: true });
