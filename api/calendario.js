@@ -60,7 +60,10 @@ function costruisciEvento(d) {
       `Stato: ${statoLabel}`
     ].join('\n'),
     start: { dateTime: `${d.data_prenotazione}T${oraInizio}`, timeZone: TIMEZONE },
-    end: { dateTime: `${d.data_prenotazione}T${oraFine}`, timeZone: TIMEZONE }
+    end: { dateTime: `${d.data_prenotazione}T${oraFine}`, timeZone: TIMEZONE },
+    // Marchio di origine: serve a chiusure-google.js per non
+    // scambiare le prenotazioni dell'app per blocchi manuali.
+    extendedProperties: { private: { origine: 'app-sarabanda' } }
   };
 }
 
