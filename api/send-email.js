@@ -109,9 +109,16 @@ export default async function handler(req, res) {
                 Abbiamo registrato la tua richiesta, ma la data resta disponibile per altri finché non riceviamo
                 la <strong>caparra di &euro;50</strong>. Se nel frattempo qualcun altro la prenota e versa la caparra, la stanza va a lui.
               </p>
+              ${data.pagamento === 'bonifico' ? `
               <p style="margin:0;color:#854F0B;font-size:13px;line-height:1.6;">
-                Per bloccarla scrivici su <strong>WhatsApp al 334 725 0887</strong> o passa in sede. Ci vuole un minuto.
-              </p>
+                Hai scelto il bonifico: trovi l'IBAN qui sotto. La stanza viene bloccata solo quando il versamento
+                arriva sul nostro conto, e servono <strong>1&ndash;3 giorni lavorativi</strong>. Se la festa è vicina,
+                conviene passare in sede.
+              </p>` : `
+              <p style="margin:0;color:#854F0B;font-size:13px;line-height:1.6;">
+                Per bloccarla <strong>passa in sede a versare la caparra</strong>, in Viale Ippolito Nievo 30 a Livorno.
+                Ci vuole un minuto.
+              </p>`}
             </div>` : ''}
  
             <div style="background: #fff; border: 1px solid #e8e8e4; border-radius: 10px; overflow: hidden; margin-bottom: 24px;">
@@ -178,7 +185,7 @@ export default async function handler(req, res) {
               Per qualsiasi informazione o modifica, rispondi a questa email o contattaci su WhatsApp.
             </p>
             <div style="text-align: center;">
-              <a href="${serveCaparra ? 'https://wa.me/393347250887' : 'https://sarabandalivorno.it'}" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">${serveCaparra ? 'Scrivici per bloccare la data' : 'Gestisci prenotazione'}</a>
+              <a href="https://sarabandalivorno.it" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Gestisci prenotazione</a>
             </div>
             <p style="color: #999; font-size: 12px; margin: 32px 0 0; text-align: center;">
               Sarabanda · Viale Ippolito Nievo 30, Livorno · Tel. 334 725 0887 · info@sarabandalivorno.it
