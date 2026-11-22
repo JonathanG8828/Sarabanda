@@ -613,6 +613,36 @@
     </div>
   </div>
 
+  <!-- PRENOTAZIONE INVIATA -->
+  <div id="screen-successo" class="app-screen">
+    <div class="top-bar">
+      <div class="logo">Prenotazione inviata</div>
+    </div>
+    <div class="content" style="text-align:center;padding-top:32px;">
+      <div style="display:inline-block;background:#E1F5EE;border-radius:50%;width:72px;height:72px;line-height:72px;font-size:34px;color:#0F6E56;">✓</div>
+      <div style="font-size:20px;font-weight:700;margin-top:20px;">Prenotazione inviata!</div>
+      <p style="color:var(--text-secondary);font-size:14px;line-height:1.7;margin-top:10px;">
+        Ti abbiamo mandato una email con tutti i dettagli.
+      </p>
+      <div style="background:#FFF8E1;border-radius:12px;padding:14px;margin-top:20px;text-align:left;border-left:3px solid #FFB300;">
+        <div style="font-size:12px;font-weight:700;color:#854F0B;margin-bottom:4px;">📩 Non la trovi?</div>
+        <div style="font-size:12px;color:#854F0B;line-height:1.6;">
+          Controlla nella cartella <strong>spam</strong> o <strong>promozioni</strong>. Se è finita lì,
+          segnala che non è spam: così le prossime ti arrivano nella posta normale.
+        </div>
+      </div>
+      <div id="successo-caparra" style="display:none;background:#FFF8E1;border-radius:12px;padding:14px;margin-top:12px;text-align:left;border-left:3px solid #FFB300;">
+        <div style="font-size:12px;font-weight:700;color:#854F0B;margin-bottom:4px;">⚠️ La stanza non è ancora bloccata</div>
+        <div style="font-size:12px;color:#854F0B;line-height:1.6;">
+          Per riservare la data serve la caparra di <strong>€50</strong>.
+          Trovi nell'email l'IBAN per il bonifico, oppure scrivici su WhatsApp per pagarla in contanti in sede.
+        </div>
+      </div>
+      <button class="btn-primary" style="margin-top:24px" onclick="showApp('prenotazioni')">Le mie prenotazioni</button>
+      <button class="btn-outline" style="margin-top:10px" onclick="showApp('home')">Torna alla home</button>
+    </div>
+  </div>
+
   <!-- LE MIE PRENOTAZIONI -->
   <div id="screen-prenotazioni" class="app-screen">
     <div class="top-bar">

@@ -183,10 +183,15 @@ export default async function handler(req, res) {
             </div>
 
             ${isCompleanno ? `
-            <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 24px;">
-              Ricorda che il giorno della festa chiediamo anche una <strong>cauzione di &euro;50</strong> a garanzia di
-              eventuali danni o pulizie straordinarie. Se è tutto in ordine te la restituiamo alla fine.
-            </p>` : ''}
+            <div style="background:#FFF8E1;border-left:3px solid #FFB300;border-radius:10px;padding:14px;margin:0 0 24px;">
+              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:13px;">&#128176; Cauzione di &euro;50</p>
+              <p style="margin:0;color:#854F0B;font-size:12px;line-height:1.7;">
+                Non si paga alla prenotazione e non è compresa nel totale: la chiediamo il giorno della festa,
+                insieme al saldo. Viene restituita <strong>integralmente entro il lunedì successivo</strong>
+                all'evento. In caso di danni alla struttura o agli arredi, o di oggetti mancanti al termine
+                dell'evento, viene trattenuta in parte o per intero a copertura dei costi.
+              </p>
+            </div>` : ''}
  
             <p style="color: #555; line-height: 1.6; font-size: 14px; margin: 0 0 24px;">
               Per qualsiasi informazione o modifica, rispondi a questa email o contattaci su WhatsApp.

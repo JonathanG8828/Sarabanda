@@ -676,7 +676,15 @@ async function salvaPrenotazione() {
 
   selectedTariffName = '';
   selectedTariffPrice = 0;
-  showApp('prenotazioni');
+
+  // L'avviso sulla caparra riguarda solo i compleanni, e solo
+  // finche' non e' stata versata.
+  const avviso = document.getElementById('successo-caparra');
+  if (avviso) {
+    avviso.style.display =
+      (tipoServizio === 'compleanno' && selectedPaymentType !== 'carta') ? 'block' : 'none';
+  }
+  showApp('successo');
 }
 
 // ═══════════════════════════════════════════
