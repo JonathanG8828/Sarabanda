@@ -65,11 +65,21 @@ export default async function handler(req, res) {
     const dataFmt = new Date(data.data_prenotazione + 'T12:00:00').toLocaleDateString('it-IT', {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
     });
+
+    // Per i compleanni la stanza e' bloccata solo quando la
+    // caparra e' stata pagata online. Senza, la data resta
+    // libera per chiunque altro e il cliente deve saperlo.
+    const isCompleanno = data.tipo_servizio === 'compleanno';
+    const caparraPagata = data.caparraPagata === true;
+    const stanzaBloccata = isCompleanno && caparraPagata;
+    const serveCaparra = isCompleanno && !caparraPagata;
  
     emails.push({
       from: 'Sarabanda Livorno <info@sarabandalivorno.it>',
       to: data.email,
-      subject: `Prenotazione confermata — ${data.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} per ${data.nome_bambino}`,
+      subject: serveCaparra
+        ? `Prenotazione da completare — Compleanno per ${data.nome_bambino}`
+        : `Prenotazione confermata — ${data.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} per ${data.nome_bambino}`,
       html: `
         <div style="font-family: -apple-system, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px 24px;">
           <div style="background: #1A3D2E; padding: 24px; border-radius: 12px 12px 0 0; text-align: center;">
@@ -78,10 +88,31 @@ export default async function handler(req, res) {
           </div>
           <div style="background: #f9f9f7; padding: 32px 24px; border-radius: 0 0 12px 12px; border: 1px solid #e8e8e4; border-top: none;">
             <div style="text-align: center; margin-bottom: 24px;">
-              <div style="display: inline-block; background: #E1F5EE; border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 28px;">✓</div>
+              <div style="display: inline-block; background: ${serveCaparra ? '#FFF3CD' : '#E1F5EE'}; border-radius: 50%; width: 56px; height: 56px; line-height: 56px; font-size: 28px;">${serveCaparra ? '!' : '&#10003;'}</div>
             </div>
-            <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 8px; text-align: center;">Prenotazione confermata!</h2>
+            <h2 style="color: #1a1a1a; font-size: 20px; margin: 0 0 8px; text-align: center;">${serveCaparra ? 'Ci siamo quasi' : 'Prenotazione confermata!'}</h2>
             <p style="color: #777; text-align: center; margin: 0 0 24px; font-size: 14px;">Ciao ${data.nome_genitore}, ecco il riepilogo</p>
+
+            ${stanzaBloccata ? `
+            <div style="background:#E1F5EE;border-radius:10px;padding:16px;margin:0 0 24px;">
+              <p style="margin:0 0 6px;color:#0F6E56;font-weight:700;font-size:15px;">&#10003; La stanza e' bloccata per te</p>
+              <p style="margin:0;color:#0F6E56;font-size:13px;line-height:1.6;">
+                Abbiamo ricevuto la caparra di &euro;50 e quella data e' ora riservata: nessun altro puo' prenotarla.
+                La caparra viene scalata dal totale, quindi il giorno della festa pagherai la differenza.
+              </p>
+            </div>` : ''}
+
+            ${serveCaparra ? `
+            <div style="background:#FFF3CD;border-radius:10px;padding:16px;margin:0 0 24px;">
+              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:15px;">La stanza non e' ancora bloccata</p>
+              <p style="margin:0 0 10px;color:#854F0B;font-size:13px;line-height:1.6;">
+                Abbiamo registrato la tua richiesta, ma la data resta disponibile per altri finche' non riceviamo
+                la <strong>caparra di &euro;50</strong>. Se nel frattempo qualcun altro la prenota e versa la caparra, la stanza va a lui.
+              </p>
+              <p style="margin:0;color:#854F0B;font-size:13px;line-height:1.6;">
+                Per bloccarla scrivici su <strong>WhatsApp al 334 725 0887</strong> o passa in sede. Ci vuole un minuto.
+              </p>
+            </div>` : ''}
  
             <div style="background: #fff; border: 1px solid #e8e8e4; border-radius: 10px; overflow: hidden; margin-bottom: 24px;">
               <div style="background: #1A3D2E; padding: 12px 16px;">
@@ -106,7 +137,7 @@ export default async function handler(req, res) {
                   <td style="padding: 12px 16px; color: #888;">Pagamento</td>
                   <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-weight: 500;">${
                     data.pagamento === 'loco' ? 'In loco (contanti o POS)' :
-                    data.pagamento === 'postepay' ? 'Postepay' :
+                    data.pagamento === 'carta' ? 'Carta — caparra €50 pagata' :
                     data.pagamento === 'bonifico' ? 'Bonifico bancario' : data.pagamento
                   }</td>
                 </tr>
@@ -121,18 +152,33 @@ export default async function handler(req, res) {
                     <div style="font-size:12px;color:#888;margin-top:4px;">Causale: Prenotazione ${data.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} - ${data.nome_bambino}</div>
                   </td>
                 </tr>` : ''}
+                ${stanzaBloccata ? `
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                  <td style="padding: 12px 16px; color: #888;">Caparra gia' versata</td>
+                  <td style="padding: 12px 16px; color: #0F6E56; text-align: right; font-weight: 600;">&minus; &euro;50</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #f0f0f0;">
+                  <td style="padding: 12px 16px; color: #888;">Da saldare il giorno della festa</td>
+                  <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-weight: 600;">&euro;${Math.max(Number(data.prezzo) - 50, 0)}</td>
+                </tr>` : ''}
                 <tr>
                   <td style="padding: 12px 16px; color: #888; font-weight: 600;">Totale</td>
                   <td style="padding: 12px 16px; color: #1A3D2E; text-align: right; font-weight: 700; font-size: 16px;">€${data.prezzo}</td>
                 </tr>
               </table>
             </div>
+
+            ${isCompleanno ? `
+            <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 24px;">
+              Ricorda che il giorno della festa chiediamo anche una <strong>cauzione di &euro;50</strong> a garanzia di
+              eventuali danni o pulizie straordinarie. Se e' tutto in ordine te la restituiamo alla fine.
+            </p>` : ''}
  
             <p style="color: #555; line-height: 1.6; font-size: 14px; margin: 0 0 24px;">
               Per qualsiasi informazione o modifica, rispondi a questa email o contattaci su WhatsApp.
             </p>
             <div style="text-align: center;">
-              <a href="https://sarabandalivorno.it" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Gestisci prenotazione</a>
+              <a href="${serveCaparra ? 'https://wa.me/393347250887' : 'https://sarabandalivorno.it'}" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">${serveCaparra ? 'Scrivici per bloccare la data' : 'Gestisci prenotazione'}</a>
             </div>
             <p style="color: #999; font-size: 12px; margin: 32px 0 0; text-align: center;">
               Sarabanda · Viale Ippolito Nievo 30, Livorno · Tel. 334 725 0887 · info@sarabandalivorno.it
@@ -146,7 +192,7 @@ export default async function handler(req, res) {
     emails.push({
       from: 'Sarabanda App <info@sarabandalivorno.it>',
       to: 'info@sarabandalivorno.it',
-      subject: `🔔 Nuova prenotazione — ${data.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} per ${data.nome_bambino}`,
+      subject: `${serveCaparra ? '⏳' : '🔔'} Nuova prenotazione — ${data.tipo_servizio === 'babyparking' ? 'Babyparking' : 'Compleanno'} per ${data.nome_bambino}${serveCaparra ? ' (caparra da incassare)' : ''}`,
       html: `
         <div style="font-family: -apple-system, sans-serif; max-width: 520px; margin: 0 auto; padding: 32px 24px;">
           <h2 style="color: #1A3D2E; margin: 0 0 24px;">🔔 Nuova prenotazione ricevuta</h2>
@@ -184,8 +230,15 @@ export default async function handler(req, res) {
             </tr>
             <tr style="border-bottom: 1px solid #f0f0f0;">
               <td style="padding: 10px 16px; color: #888; background: #fafafa;">Pagamento</td>
-              <td style="padding: 10px 16px;">${data.pagamento === 'loco' ? 'In loco' : 'Online'}</td>
+              <td style="padding: 10px 16px;">${data.pagamento === 'loco' ? 'In loco' : data.pagamento === 'carta' ? 'Carta (caparra pagata)' : 'Bonifico'}</td>
             </tr>
+            ${isCompleanno ? `
+            <tr style="border-bottom: 1px solid #f0f0f0;">
+              <td style="padding: 10px 16px; color: #888; background: #fafafa;">Stanza</td>
+              <td style="padding: 10px 16px; font-weight: 700; color: ${stanzaBloccata ? '#0F6E56' : '#854F0B'};">
+                ${stanzaBloccata ? 'BLOCCATA — caparra incassata' : 'NON bloccata — caparra da incassare'}
+              </td>
+            </tr>` : ''}
             <tr>
               <td style="padding: 10px 16px; color: #888; background: #fafafa; font-weight: 600;">Totale</td>
               <td style="padding: 10px 16px; color: #1A3D2E; font-weight: 700; font-size: 16px;">€${data.prezzo}</td>

@@ -667,7 +667,11 @@ async function salvaPrenotazione() {
     pacchetto: pacchettoConOrario,
     prezzo: selectedTariffPrice,
     data_prenotazione: data,
-    pagamento: selectedPaymentType
+    pagamento: selectedPaymentType,
+    // La stanza si blocca solo con la caparra pagata online.
+    // Finche' il pagamento con carta non e' attivo resta false,
+    // quindi il cliente riceve l'avviso che la data e' libera.
+    caparraPagata: selectedPaymentType === 'carta'
   });
 
   selectedTariffName = '';
