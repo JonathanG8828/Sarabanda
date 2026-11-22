@@ -95,18 +95,18 @@ export default async function handler(req, res) {
 
             ${stanzaBloccata ? `
             <div style="background:#E1F5EE;border-radius:10px;padding:16px;margin:0 0 24px;">
-              <p style="margin:0 0 6px;color:#0F6E56;font-weight:700;font-size:15px;">&#10003; La stanza e' bloccata per te</p>
+              <p style="margin:0 0 6px;color:#0F6E56;font-weight:700;font-size:15px;">&#10003; La stanza è bloccata per te</p>
               <p style="margin:0;color:#0F6E56;font-size:13px;line-height:1.6;">
-                Abbiamo ricevuto la caparra di &euro;50 e quella data e' ora riservata: nessun altro puo' prenotarla.
+                Abbiamo ricevuto la caparra di &euro;50 e quella data è ora riservata: nessun altro può prenotarla.
                 La caparra viene scalata dal totale, quindi il giorno della festa pagherai la differenza.
               </p>
             </div>` : ''}
 
             ${serveCaparra ? `
             <div style="background:#FFF3CD;border-radius:10px;padding:16px;margin:0 0 24px;">
-              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:15px;">La stanza non e' ancora bloccata</p>
+              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:15px;">La stanza non è ancora bloccata</p>
               <p style="margin:0 0 10px;color:#854F0B;font-size:13px;line-height:1.6;">
-                Abbiamo registrato la tua richiesta, ma la data resta disponibile per altri finche' non riceviamo
+                Abbiamo registrato la tua richiesta, ma la data resta disponibile per altri finché non riceviamo
                 la <strong>caparra di &euro;50</strong>. Se nel frattempo qualcun altro la prenota e versa la caparra, la stanza va a lui.
               </p>
               <p style="margin:0;color:#854F0B;font-size:13px;line-height:1.6;">
@@ -154,7 +154,7 @@ export default async function handler(req, res) {
                 </tr>` : ''}
                 ${stanzaBloccata ? `
                 <tr style="border-bottom: 1px solid #f0f0f0;">
-                  <td style="padding: 12px 16px; color: #888;">Caparra gia' versata</td>
+                  <td style="padding: 12px 16px; color: #888;">Caparra già versata</td>
                   <td style="padding: 12px 16px; color: #0F6E56; text-align: right; font-weight: 600;">&minus; &euro;50</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #f0f0f0;">
@@ -171,7 +171,7 @@ export default async function handler(req, res) {
             ${isCompleanno ? `
             <p style="color:#777;font-size:13px;line-height:1.6;margin:0 0 24px;">
               Ricorda che il giorno della festa chiediamo anche una <strong>cauzione di &euro;50</strong> a garanzia di
-              eventuali danni o pulizie straordinarie. Se e' tutto in ordine te la restituiamo alla fine.
+              eventuali danni o pulizie straordinarie. Se è tutto in ordine te la restituiamo alla fine.
             </p>` : ''}
  
             <p style="color: #555; line-height: 1.6; font-size: 14px; margin: 0 0 24px;">
