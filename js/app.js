@@ -349,6 +349,7 @@ function showApp(screenName) {
 
   if (screenName === 'home') loadHomeBookings();
   if (screenName === 'prenotazioni') { loadPrenotazioni(); loadPagamentiSospeso(); }
+  if (screenName === 'faq-app') caricaFaq();
   if (screenName === 'admin') {
     // Solo l'admin può accedere
     if (currentUser?.email !== ADMIN_EMAIL) {
@@ -1418,22 +1419,36 @@ async function cmsRimuoviPacchetto(id) {
 //  FAQ — VISTA PUBBLICA
 // ═══════════════════════════════════════════
 async function caricaFaq() {
-  const el = document.getElementById('faq-list');
-  if (!el) return;
+  // Le domande compaiono in due posti: la schermata pubblica
+  // prima del login e quella dentro l'app. Stesso contenuto.
+  const contenitori = ['faq-list', 'faq-list-app']
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+  if (contenitori.length === 0) return;
+
   const { data, error } = await db.from('faq').select('*').eq('attivo', true).order('ordine', { ascending: true });
+
   if (error || !data || data.length === 0) {
-    el.innerHTML = '<div class="empty-state">Nessuna domanda al momento. Scrivici su WhatsApp!</div>';
+    contenitori.forEach(el => {
+      el.innerHTML = '<div class="empty-state">Nessuna domanda al momento. Scrivici su WhatsApp!</div>';
+    });
     return;
   }
-  el.innerHTML = data.map(f => `
-    <div class="faq-item" id="faq-item-${f.id}">
-      <button class="faq-q" onclick="faqToggle(${f.id})">
-        <span>${escapeHtml(f.domanda)}</span>
-        <span class="faq-chevron">⌄</span>
-      </button>
-      <div class="faq-a" id="faq-a-${f.id}">${escapeHtml(f.risposta)}</div>
-    </div>
-  `).join('');
+
+  // Gli id delle voci devono essere unici fra le due schermate,
+  // altrimenti aprirne una ne aprirebbe due.
+  contenitori.forEach(el => {
+    const p = el.id === 'faq-list-app' ? 'app' : 'pub';
+    el.innerHTML = data.map(f => `
+      <div class="faq-item" id="faq-item-${p}-${f.id}">
+        <button class="faq-q" onclick="faqToggle('${p}-${f.id}')">
+          <span>${escapeHtml(f.domanda)}</span>
+          <span class="faq-chevron">⌄</span>
+        </button>
+        <div class="faq-a">${escapeHtml(f.risposta)}</div>
+      </div>
+    `).join('');
+  });
 }
 
 function faqToggle(id) {

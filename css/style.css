@@ -87,6 +87,10 @@ html, body {
   z-index: 1;
 }
 .logo { font-size: 18px; font-weight: 700; letter-spacing: 2px; flex: 1; }
+/* La home mostra il logo vero come la schermata iniziale.
+   mix-blend-mode fonde il suo sfondo nero col motivo dietro. */
+.top-bar-home { padding-top: 40px; padding-bottom: 18px; }
+.home-logo { width: 180px; display: block; margin: 0 auto 2px; }
 .greeting { font-size: 12px; opacity: 0.65; margin-top: 2px; }
 .back-btn {
   font-size: 14px; color: rgba(255,255,255,0.85);
@@ -312,7 +316,6 @@ label:first-child { margin-top: 0; }
   width: 230px;
   display: block;
   margin: 0 auto 10px;
-  mix-blend-mode: screen;
 }
 .landing-tagline {
   font-size: 14px;
