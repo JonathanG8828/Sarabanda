@@ -103,24 +103,31 @@ export default async function handler(req, res) {
             </div>` : ''}
 
             ${serveCaparra ? `
-            <div style="background:#FFF3CD;border-radius:10px;padding:16px;margin:0 0 24px;">
-              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:15px;">La stanza non è ancora bloccata</p>
-              <p style="margin:0 0 10px;color:#854F0B;font-size:13px;line-height:1.6;">
-                Abbiamo registrato la tua richiesta, ma la data resta disponibile per altri finché non riceviamo
-                la <strong>caparra di &euro;50</strong>. Se nel frattempo qualcun altro la prenota e versa la caparra, la stanza va a lui.
+            <div style="background:#FFF3CD;border-radius:10px;padding:18px;margin:0 0 24px;">
+              <p style="margin:0 0 8px;color:#854F0B;font-weight:700;font-size:15px;">La stanza non è ancora bloccata</p>
+              <p style="margin:0 0 16px;color:#854F0B;font-size:13px;line-height:1.6;">
+                Abbiamo registrato la tua richiesta. Per riservare davvero la data serve la
+                <strong>caparra di &euro;50</strong>, che viene poi scalata dal totale della festa.
+                Finché non la riceviamo la data resta disponibile per altri.
               </p>
-              ${data.pagamento === 'bonifico' ? `
+
+              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:13px;">1. Bonifico bancario</p>
+              <div style="background:#fff;border-radius:8px;padding:12px;margin:0 0 14px;">
+                <div style="font-size:13px;color:#1a1a1a;font-weight:600;">IT38C0503413904000000002594</div>
+                <div style="font-size:12px;color:#666;margin-top:3px;">Intestato a Associazione Sarabanda &middot; BIC BAPPIT21T01</div>
+                <div style="font-size:12px;color:#666;margin-top:3px;">Causale: Caparra compleanno ${data.nome_bambino} &middot; ${dataFmt}</div>
+              </div>
+              <p style="margin:0 0 16px;color:#854F0B;font-size:12px;line-height:1.6;">
+                La stanza si blocca quando il versamento arriva sul conto: servono 1&ndash;3 giorni lavorativi.
+              </p>
+
+              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:13px;">2. In contanti, in sede</p>
               <p style="margin:0;color:#854F0B;font-size:13px;line-height:1.6;">
-                Hai scelto il bonifico: trovi l'IBAN qui sotto. La stanza viene bloccata solo quando il versamento
-                arriva sul nostro conto, e servono <strong>1&ndash;3 giorni lavorativi</strong>. Se la festa è vicina,
-                conviene passare in sede.
-              </p>` : `
-              <p style="margin:0;color:#854F0B;font-size:13px;line-height:1.6;">
-                Per bloccarla <strong>passa in sede a versare la caparra</strong>, in Viale Ippolito Nievo 30 a Livorno.
-                Ci vuole un minuto.
-              </p>`}
+                Scrivici su <strong>WhatsApp al 334 725 0887</strong> e fissiamo un appuntamento.
+                Paghi la caparra di persona e la stanza è bloccata subito.
+              </p>
             </div>` : ''}
- 
+
             <div style="background: #fff; border: 1px solid #e8e8e4; border-radius: 10px; overflow: hidden; margin-bottom: 24px;">
               <div style="background: #1A3D2E; padding: 12px 16px;">
                 <p style="color: #fff; margin: 0; font-weight: 600; font-size: 14px;">
@@ -149,7 +156,7 @@ export default async function handler(req, res) {
                   }</td>
                 </tr>
                 
-                ${data.pagamento === 'bonifico' ? `
+                ${data.pagamento === 'bonifico' && !serveCaparra ? `
                 <tr style="border-bottom: 1px solid #f0f0f0;">
                   <td colspan="2" style="padding: 12px 16px;">
                     <div style="font-size:12px;color:#888;margin-bottom:6px;">Dati per il bonifico</div>
@@ -185,7 +192,7 @@ export default async function handler(req, res) {
               Per qualsiasi informazione o modifica, rispondi a questa email o contattaci su WhatsApp.
             </p>
             <div style="text-align: center;">
-              <a href="https://sarabandalivorno.it" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">Gestisci prenotazione</a>
+              <a href="${serveCaparra ? 'https://wa.me/393347250887' : 'https://sarabandalivorno.it'}" style="background: #1A3D2E; color: #fff; padding: 14px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 15px;">${serveCaparra ? 'Fissa un appuntamento' : 'Gestisci prenotazione'}</a>
             </div>
             <p style="color: #999; font-size: 12px; margin: 32px 0 0; text-align: center;">
               Sarabanda · Viale Ippolito Nievo 30, Livorno · Tel. 334 725 0887 · info@sarabandalivorno.it
