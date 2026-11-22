@@ -73,6 +73,15 @@ export default async function handler(req, res) {
     const caparraPagata = data.caparraPagata === true;
     const stanzaBloccata = isCompleanno && caparraPagata;
     const serveCaparra = isCompleanno && !caparraPagata;
+
+    // Saldo e cauzione vanno versati entro due giorni prima
+    // della festa. La data esatta e' piu' chiara di "due giorni
+    // prima" e piu' difficile da dimenticare.
+    const scadenza = new Date(data.data_prenotazione + 'T12:00:00');
+    scadenza.setDate(scadenza.getDate() - 2);
+    const scadenzaFmt = scadenza.toLocaleDateString('it-IT', {
+      weekday: 'long', day: 'numeric', month: 'long'
+    });
  
     emails.push({
       from: 'Sarabanda Livorno <info@sarabandalivorno.it>',
@@ -98,7 +107,7 @@ export default async function handler(req, res) {
               <p style="margin:0 0 6px;color:#0F6E56;font-weight:700;font-size:15px;">&#10003; La stanza è bloccata per te</p>
               <p style="margin:0;color:#0F6E56;font-size:13px;line-height:1.6;">
                 Abbiamo ricevuto la caparra di &euro;50 e quella data è ora riservata: nessun altro può prenotarla.
-                La caparra viene scalata dal totale, quindi il giorno della festa pagherai la differenza.
+                La caparra viene scalata dal totale: quello che resta va versato entro ${scadenzaFmt}, come spieghiamo qui sotto.
               </p>
             </div>` : ''}
 
@@ -172,7 +181,7 @@ export default async function handler(req, res) {
                   <td style="padding: 12px 16px; color: #0F6E56; text-align: right; font-weight: 600;">&minus; &euro;50</td>
                 </tr>
                 <tr style="border-bottom: 1px solid #f0f0f0;">
-                  <td style="padding: 12px 16px; color: #888;">Da saldare il giorno della festa</td>
+                  <td style="padding: 12px 16px; color: #888;">Saldo, entro ${scadenzaFmt}</td>
                   <td style="padding: 12px 16px; color: #1a1a1a; text-align: right; font-weight: 600;">&euro;${Math.max(Number(data.prezzo) - 50, 0)}</td>
                 </tr>` : ''}
                 <tr>
@@ -183,13 +192,26 @@ export default async function handler(req, res) {
             </div>
 
             ${isCompleanno ? `
-            <div style="background:#FFF8E1;border-left:3px solid #FFB300;border-radius:10px;padding:14px;margin:0 0 24px;">
-              <p style="margin:0 0 6px;color:#854F0B;font-weight:700;font-size:13px;">&#128176; Cauzione di &euro;50</p>
+            <div style="background:#FFF8E1;border-left:3px solid #FFB300;border-radius:10px;padding:16px;margin:0 0 24px;">
+              <p style="margin:0 0 8px;color:#854F0B;font-weight:700;font-size:14px;">&#128176; Saldo e cauzione: entro ${scadenzaFmt}</p>
+
+              <p style="margin:0 0 12px;color:#854F0B;font-size:12px;line-height:1.7;">
+                Due giorni prima della festa vanno versati <strong>il saldo</strong> e <strong>la cauzione di &euro;50</strong>.
+                Puoi farlo in sede o con bonifico: se scegli il bonifico, tieni conto che servono alcuni giorni
+                e fallo per tempo.
+              </p>
+
+              <p style="margin:0 0 4px;color:#854F0B;font-weight:700;font-size:12px;">Il saldo</p>
+              <p style="margin:0 0 12px;color:#854F0B;font-size:12px;line-height:1.7;">
+                È quello che resta del totale una volta tolta la caparra già versata.
+              </p>
+
+              <p style="margin:0 0 4px;color:#854F0B;font-weight:700;font-size:12px;">La cauzione di &euro;50</p>
               <p style="margin:0;color:#854F0B;font-size:12px;line-height:1.7;">
-                Non si paga alla prenotazione e non è compresa nel totale: la chiediamo il giorno della festa,
-                insieme al saldo. Viene restituita <strong>integralmente entro il lunedì successivo</strong>
-                all'evento. In caso di danni alla struttura o agli arredi, o di oggetti mancanti al termine
-                dell'evento, viene trattenuta in parte o per intero a copertura dei costi.
+                È un deposito a garanzia, <strong>non un costo</strong>: non è compresa nel totale della festa e
+                <strong>te la restituiamo per intero entro il lunedì successivo</strong> all'evento.
+                La tratteniamo, in parte o per intero, solo se ci sono danni alla struttura o agli arredi,
+                oppure se al termine della festa mancano degli oggetti.
               </p>
             </div>` : ''}
  
